@@ -7,5 +7,6 @@ namespace Timer.Utils {
 
         public static string FormatDateTime(DateTime dateTime) => dateTime.ToString(DateTimeFormat);
         public static DateTime ToDateTime(string stringDateTime) => DateTime.ParseExact(stringDateTime, DateTimeFormat, CultureInfo.InvariantCulture);
+        public static DateTime CurrentDateTime() => ToDateTime(FormatDateTime(DateTime.Now));
     }
 }
