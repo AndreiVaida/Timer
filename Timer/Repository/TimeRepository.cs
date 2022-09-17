@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Timer.model;
-using Timer.Service;
+using Timer.Model;
 using Timer.Utils;
 
 namespace Timer.Repository {

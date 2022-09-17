@@ -6,7 +6,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Timer.model;
+using Timer.Model;
 using Timer.service;
+using Timer.Utils;
 
 namespace Timer {
     /// <summary>
@@ -30,10 +32,9 @@ namespace Timer {
 
         private void OnCreateActivityClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
-            var step = _timeService.CreateActivity(InputActivityName.Text);
+            var timeLog = _timeService.CreateActivity(InputActivityName.Text);
 
-            var buttonToPress = GetButtonForStep(step);
-            MakeSingleButtonPressed(buttonToPress);
+            UpdateWindow(timeLog);
         }
 
         private void OnStepButtonClick(object sender, RoutedEventArgs e) {
@@ -99,13 +100,11 @@ namespace Timer {
         }
 
         private void LoadLatestActivity() {
-            var (activityName, step) = _timeService.LoadLatestActivity();
+            var (activityName, timeLog) = _timeService.LoadLatestActivity();
             if (activityName == null) return;
 
             InputActivityName.Text = activityName;
-
-            var buttonToPress = GetButtonForStep(step);
-            MakeSingleButtonPressed(buttonToPress);
+            UpdateWindow(timeLog);
         }
 
         private Button? GetButtonForStep(Step? step) =>
@@ -118,5 +117,15 @@ namespace Timer {
                 Step.PAUSE => ButtonPause,
                 _ => null
         };
+
+        private void UpdateWindow(TimeLog? timeLog) {
+            var buttonToPress = GetButtonForStep(timeLog?.Step);
+            MakeSingleButtonPressed(buttonToPress);
+            UpdateStartActivityTime(timeLog?.DateTime);
+        }
+
+        private void UpdateStartActivityTime(DateTime? dateTime) {
+            LabelStartActivityTime.Content = dateTime == null ? string.Empty : TimeUtils.FormatDateTime((DateTime)dateTime);
+        }
     }
 }

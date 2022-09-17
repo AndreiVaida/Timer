@@ -6,7 +6,6 @@ using System.Reactive.Subjects;
 using Timer.model;
 using Timer.Model;
 using Timer.Repository;
-using Timer.Service;
 using Timer.Utils;
 
 namespace Timer.service {
@@ -21,12 +20,12 @@ namespace Timer.service {
             _timeRepository = new();
         }
 
-        public Step? CreateActivity(string activityName) {
+        public TimeLog? CreateActivity(string activityName) {
             _timeRepository.CreateActivity(activityName);
             CalculateLoggedStepsDuration();
             NotifyLoggedStepsDuration();
             StartTimer();
-            return _timeLogs.LastOrDefault()?.Step;
+            return _timeLogs.LastOrDefault();
         }
 
         public void StartStep(Step step) {
@@ -38,14 +37,13 @@ namespace Timer.service {
             _timeRepository.AddStep(now, step);
         }
 
-        public (string?, Step?) LoadLatestActivity() {
+        public (string?, TimeLog?) LoadLatestActivity() {
             var activityName = TimeRepository.GetLastActivityName();
             if (activityName == null)
                 return (null, null);
 
             CreateActivity(activityName);
-            var currentStep = _timeLogs.LastOrDefault()?.Step;
-            return (activityName, currentStep);
+            return (activityName, _timeLogs.LastOrDefault());
         }
 
         private void CalculateLoggedStepsDuration() {

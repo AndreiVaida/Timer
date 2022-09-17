@@ -1,7 +1,7 @@
 ﻿using System;
 using Timer.model;
 
-namespace Timer.Service {
+namespace Timer.Model {
     public class TimeLog {
         public readonly Step Step;
         public readonly DateTime DateTime;
