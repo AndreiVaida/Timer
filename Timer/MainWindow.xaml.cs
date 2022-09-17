@@ -27,28 +27,41 @@ namespace Timer {
             _timeService = new();
         }
 
+        private bool IsActivityNameValid() => InputActivityName.Text.Trim().Length > 0;
+
+        private void OnCreateActivityClick(object sender, RoutedEventArgs e) {
+            if (!IsActivityNameValid()) return;
+            _timeService.CreateActivity(InputActivityName.Text);
+        }
+
         private void OnDownloadClick(object sender, RoutedEventArgs e) {
-            _timeService.Download(InputActivityName.Text);
+            if (!IsActivityNameValid()) return;
+            _timeService.Download();
         }
 
         private void OnLoadingClick(object sender, RoutedEventArgs e) {
-
+            if (!IsActivityNameValid()) return;
+            _timeService.Loading();
         }
 
         private void OnEditingClick(object sender, RoutedEventArgs e) {
-
+            if (!IsActivityNameValid()) return;
+            _timeService.Editing();
         }
 
-        private void OnBlockedClick(object sender, RoutedEventArgs e) {
-
+        private void OnFreezeReloadClick(object sender, RoutedEventArgs e) {
+            if (!IsActivityNameValid()) return;
+            _timeService.FreezeReload();
         }
 
         private void OnPauseClick(object sender, RoutedEventArgs e) {
-
+            if (!IsActivityNameValid()) return;
+            _timeService.Pause();
         }
 
         private void OnExportClick(object sender, RoutedEventArgs e) {
-
+            if (!IsActivityNameValid()) return;
+            _timeService.Export();
         }
     }
 }

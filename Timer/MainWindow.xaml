@@ -13,8 +13,9 @@
         </Grid>
         <Grid Height="43" Margin="0,101,0,0" VerticalAlignment="Top">
             <Label Content="Activitate:" Width="100" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <TextBox x:Name="InputActivityName" Text="2022.09.17 - ITO Film complet" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,6,54,7" />
-            <Label Content=".csv" Width="50" Margin="726,0,4,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            <TextBox x:Name="InputActivityName" Text="2022.09.17 - ITO Film complet" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,0,130,0" />
+            <Label Content=".csv" Width="50" Margin="726,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            <Button Margin="812,8,10,5" Click="OnCreateActivityClick">Creează</Button>
         </Grid>
         <DockPanel Height="100" Margin="10,150,10,0" VerticalAlignment="Top">
             <Grid Height="60" Margin="10 0 10 0">
@@ -30,7 +31,7 @@
                 <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
-                <Button Content="⚡⏳ Blocat, reîncărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnBlockedClick" />
+                <Button Content="⚡⏳ Blocat, reîncărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnFreezeReloadClick" />
                 <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
