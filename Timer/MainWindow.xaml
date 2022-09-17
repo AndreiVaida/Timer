@@ -24,35 +24,35 @@
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
                 <Button Content="⏳ Încărcare program" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnLoadingClick" />
-                <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                <Label Name="LabelLoadingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
                 <Button Content="🚀 Editare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnEditingClick" />
-                <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
+                <Label Name="LabelEditTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
                 <Button Content="⚡⏳ Blocat, reîncărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnFreezeReloadClick" />
-                <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
+                <Label Name="LabelFreezeReloadTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
                 <Button Content="⏸️ Pauză" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#1D32E0" Foreground="White" Click="OnPauseClick" />
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
                 <Button Content="💾 Export" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnExportClick" />
-                <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                <Label Name="LabelExportTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
             </Grid>
         </DockPanel>
         <Grid Margin="0,255,0,0">
             <DockPanel VerticalAlignment="Bottom" Margin="0 20">
                 <Label>Activitate începută la:</Label>
-                <Label></Label>
+                <Label Name="LabelStartActivityTime"></Label>
             </DockPanel>
             <DockPanel VerticalAlignment="Bottom">
                 <Label>Activitate finalizată la:</Label>
-                <Label></Label>
+                <Label Name="LabelFinishTime"></Label>
             </DockPanel>
             <Label VerticalAlignment="Top" HorizontalAlignment="Center">Total</Label>
-            <Label VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,23,0,0">00:00:00</Label>
+            <Label Name="LabelTotalTime" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,23,0,0">00:00:00</Label>
             <Button Width="180" Margin="360,50,360,0">Salvare total în fișier</Button>
         </Grid>
     </Grid>

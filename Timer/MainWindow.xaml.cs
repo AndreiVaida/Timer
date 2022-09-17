@@ -12,7 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Timer.model;
 using Timer.service;
+using Timer.Utils;
 
 namespace Timer {
     /// <summary>
@@ -25,6 +27,7 @@ namespace Timer {
         public MainWindow() {
             InitializeComponent();
             _timeService = new();
+            SubscribeToTimeEvents();
         }
 
         private bool IsActivityNameValid() => InputActivityName.Text.Trim().Length > 0;
@@ -62,6 +65,18 @@ namespace Timer {
         private void OnExportClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
             _timeService.Export();
+        }
+
+        private void SubscribeToTimeEvents() {
+            _timeService.TimeUpdates.Subscribe(timeEvent => {
+                switch(timeEvent.Step) {
+                    case Step.DOWNLOAD: LabelDownloadTime.Content = timeEvent.Duration.ToString(); break;
+                    case Step.LOAD: LabelLoadingTime.Content = timeEvent.Duration.ToString(); break;
+                    case Step.EDIT: LabelEditTime.Content = timeEvent.Duration.ToString(); break;
+                    case Step.FREEZE_RELOAD: LabelFreezeReloadTime.Content = timeEvent.Duration.ToString(); break;
+                    case Step.EXPORT: LabelExportTime.Content = timeEvent.Duration.ToString(); break;
+                }
+            });
         }
     }
 }

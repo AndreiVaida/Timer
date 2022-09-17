@@ -4,11 +4,11 @@ using Timer.model;
 namespace Timer.Model {
     public class TimeEvent {
         public readonly Step Step;
-        public readonly DateTime DateTime;
+        public readonly TimeSpan Duration;
 
-        public TimeEvent(Step step, DateTime dateTime) {
+        public TimeEvent(Step step, TimeSpan duration) {
             Step = step;
-            DateTime = dateTime;
+            Duration = duration;
         }
     }
 }
