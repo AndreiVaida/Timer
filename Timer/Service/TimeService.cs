@@ -29,6 +29,8 @@ namespace Timer.service {
         }
 
         public void StartStep(Step step) {
+            if (_timeLogs == null) return;
+
             var now = TimeUtils.CurrentDateTime();
             UpdateLastStepDuration();
             _timeLogs.Add(new TimeLog(step, now));

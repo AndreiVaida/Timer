@@ -26,9 +26,11 @@ namespace Timer {
     public partial class MainWindow : Window {
         private readonly TimeService _timeService;
         private readonly IScheduler _uiScheduler;
+        private IList<Button> _buttonList;
 
         public MainWindow() {
             InitializeComponent();
+            InitializeButtonList();
             _timeService = new();
             _uiScheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
             SubscribeToTimeEvents();
@@ -41,34 +43,51 @@ namespace Timer {
             _timeService.CreateActivity(InputActivityName.Text);
         }
 
-        private void OnDownloadClick(object sender, RoutedEventArgs e) {
+        private void OnStepButtonClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
-            _timeService.StartStep(Step.DOWNLOAD);
+            var button = (Button)sender;
+
+            if (button == ButtonDownload)
+                OnStepButtonClick(button, Step.DOWNLOAD);
+
+            if (button == ButtonLoad)
+                OnStepButtonClick(button, Step.LOAD);
+
+            if (button == ButtonEdit)
+                OnStepButtonClick(button, Step.EDIT);
+
+            if (button == ButtonFreezeReload)
+                OnStepButtonClick(button, Step.FREEZE_RELOAD);
+
+            if (button == ButtonPause)
+                OnStepButtonClick(button, Step.PAUSE);
+
+            if (button == ButtonExport)
+                OnStepButtonClick(button, Step.EXPORT);
         }
 
-        private void OnLoadingClick(object sender, RoutedEventArgs e) {
-            if (!IsActivityNameValid()) return;
-            _timeService.StartStep(Step.LOAD);
+        private void OnStepButtonClick(Button button, Step step) {
+            _timeService.StartStep(step);
+            MakeSingleButtonPressed(button);
         }
 
-        private void OnEditingClick(object sender, RoutedEventArgs e) {
-            if (!IsActivityNameValid()) return;
-            _timeService.StartStep(Step.EDIT);
+        private void InitializeButtonList() {
+            _buttonList = new List<Button> {
+                ButtonDownload,
+                ButtonLoad,
+                ButtonEdit,
+                ButtonFreezeReload,
+                ButtonPause,
+                ButtonExport
+            };
+
+            MakeSingleButtonPressed(null);
         }
 
-        private void OnFreezeReloadClick(object sender, RoutedEventArgs e) {
-            if (!IsActivityNameValid()) return;
-            _timeService.StartStep(Step.FREEZE_RELOAD);
-        }
-
-        private void OnPauseClick(object sender, RoutedEventArgs e) {
-            if (!IsActivityNameValid()) return;
-            _timeService.StartStep(Step.PAUSE);
-        }
-
-        private void OnExportClick(object sender, RoutedEventArgs e) {
-            if (!IsActivityNameValid()) return;
-            _timeService.StartStep(Step.EXPORT);
+        private void MakeSingleButtonPressed(Button? pressedButton) {
+            foreach (var button in _buttonList) {
+                button.Opacity = button == pressedButton ? 0.5 : 1;
+            }
         }
 
         private void SubscribeToTimeEvents() {
