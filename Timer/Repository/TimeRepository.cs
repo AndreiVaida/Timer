@@ -46,6 +46,13 @@ namespace Timer.Repository {
                 .Select(MapLineToTimeLog)
                 .ToList();
 
+        public static string? GetLastActivityName() =>
+            new DirectoryInfo(DataFolderPath).GetFiles()
+            .OrderByDescending(file => file.LastWriteTime)
+            .Take(1)
+            .Select(file => Path.GetFileNameWithoutExtension(file.Name))
+            .FirstOrDefault();
+
         private static bool IsEmptyFile(string filePath) => !File.Exists(filePath) || new FileInfo(filePath).Length == 0;
 
         private bool IsValidTimeEventLine(string line) => line.Trim().Length > 0 && line.Split(CsvSeparator).Length == 2 && line != CsvHeader;

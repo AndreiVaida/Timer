@@ -37,6 +37,16 @@ namespace Timer.service {
             _timeRepository.AddStep(now, step);
         }
 
+        public (string?, Step?) LoadLatestActivity() {
+            var activityName = TimeRepository.GetLastActivityName();
+            if (activityName == null)
+                return (null, null);
+
+            CreateActivity(activityName);
+            var currentStep = _timeLogs.LastOrDefault()?.Step;
+            return (activityName, currentStep);
+        }
+
         private void CalculateLoggedStepsDuration() {
             _timeLogs = _timeRepository.GetTimeLogs();
             InitializeStepsDuration();

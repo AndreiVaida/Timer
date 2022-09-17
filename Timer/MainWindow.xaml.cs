@@ -1,23 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Timer.model;
 using Timer.service;
-using Timer.Utils;
 
 namespace Timer {
     /// <summary>
@@ -34,6 +23,7 @@ namespace Timer {
             _timeService = new();
             _uiScheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
             SubscribeToTimeEvents();
+            LoadLatestActivity();
         }
 
         private bool IsActivityNameValid() => InputActivityName.Text.Trim().Length > 0;
@@ -103,6 +93,25 @@ namespace Timer {
                         case Step.TOTAL: LabelTotalTime.Content = timeEvent.Duration.ToString(); break;
                     }
                 });
+        }
+
+        private void LoadLatestActivity() {
+            var (activityName, step) = _timeService.LoadLatestActivity();
+            if (activityName == null) return;
+
+            InputActivityName.Text = activityName;
+
+            if (step == null) return;
+            var buttonToPress = step switch {
+                Step.DOWNLOAD => ButtonDownload,
+                Step.LOAD => ButtonLoad,
+                Step.EDIT => ButtonEdit,
+                Step.FREEZE_RELOAD => ButtonFreezeReload,
+                Step.EXPORT => ButtonExport,
+                Step.PAUSE => ButtonPause,
+                _ => null,
+            };
+            MakeSingleButtonPressed(buttonToPress);
         }
     }
 }
