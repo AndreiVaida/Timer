@@ -21,11 +21,12 @@ namespace Timer.service {
             _timeRepository = new();
         }
 
-        public void CreateActivity(string activityName) {
+        public Step? CreateActivity(string activityName) {
             _timeRepository.CreateActivity(activityName);
             CalculateLoggedStepsDuration();
             NotifyLoggedStepsDuration();
             StartTimer();
+            return _timeLogs.LastOrDefault()?.Step;
         }
 
         public void StartStep(Step step) {

@@ -30,7 +30,10 @@ namespace Timer {
 
         private void OnCreateActivityClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
-            _timeService.CreateActivity(InputActivityName.Text);
+            var step = _timeService.CreateActivity(InputActivityName.Text);
+
+            var buttonToPress = GetButtonForStep(step);
+            MakeSingleButtonPressed(buttonToPress);
         }
 
         private void OnStepButtonClick(object sender, RoutedEventArgs e) {
@@ -101,17 +104,19 @@ namespace Timer {
 
             InputActivityName.Text = activityName;
 
-            if (step == null) return;
-            var buttonToPress = step switch {
+            var buttonToPress = GetButtonForStep(step);
+            MakeSingleButtonPressed(buttonToPress);
+        }
+
+        private Button? GetButtonForStep(Step? step) =>
+            step switch {
                 Step.DOWNLOAD => ButtonDownload,
                 Step.LOAD => ButtonLoad,
                 Step.EDIT => ButtonEdit,
                 Step.FREEZE_RELOAD => ButtonFreezeReload,
                 Step.EXPORT => ButtonExport,
                 Step.PAUSE => ButtonPause,
-                _ => null,
-            };
-            MakeSingleButtonPressed(buttonToPress);
-        }
+                _ => null
+        };
     }
 }
