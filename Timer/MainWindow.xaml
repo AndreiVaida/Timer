@@ -13,31 +13,31 @@
         </Grid>
         <Grid Height="43" Margin="0,101,0,0" VerticalAlignment="Top">
             <Label Content="Activitate:" Width="100" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <TextBox x:Name="ActivityName" Text="2022.09.17 - ITO Film complet" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,6,54,7" />
+            <TextBox x:Name="InputActivityName" Text="2022.09.17 - ITO Film complet" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,6,54,7" />
             <Label Content=".csv" Width="50" Margin="726,0,4,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
         </Grid>
         <DockPanel Height="100" Margin="10,150,10,0" VerticalAlignment="Top">
             <Grid Height="60" Margin="10 0 10 0">
                 <Button Content="📥 Descărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnDownloadClick" />
+                <Label Name="LabelDownloadTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+            </Grid>
+            <Grid Height="60" Margin="10 0 10 0">
+                <Button Content="⏳ Încărcare program" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnLoadingClick" />
                 <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
-                <Button Content="⏳ Încărcare program" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnDownloadClick" />
-                <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
-            </Grid>
-            <Grid Height="60" Margin="10 0 10 0">
-                <Button Content="🚀 Editare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnDownloadClick" />
+                <Button Content="🚀 Editare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnEditingClick" />
                 <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
-                <Button Content="⚡⏳ Blocat, reîncărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnDownloadClick" />
+                <Button Content="⚡⏳ Blocat, reîncărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnBlockedClick" />
                 <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
-                <Button Content="⏸️ Pauză" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#1D32E0" Foreground="White" Click="OnDownloadClick" />
+                <Button Content="⏸️ Pauză" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#1D32E0" Foreground="White" Click="OnPauseClick" />
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
-                <Button Content="💾 Export" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnDownloadClick" />
+                <Button Content="💾 Export" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnExportClick" />
                 <Label HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
             </Grid>
         </DockPanel>
