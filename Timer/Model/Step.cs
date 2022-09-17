@@ -5,6 +5,7 @@
         EDIT,
         FREEZE_RELOAD,
         PAUSE,
-        EXPORT
+        EXPORT,
+        TOTAL
     }
 }

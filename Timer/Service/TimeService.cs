@@ -67,11 +67,11 @@ namespace Timer.service {
             for (var i = 1; i < timeLogs.Count; i++) {
                 var timeLog = timeLogs[i - 1];
                 var nextTimeLog = timeLogs[i];
-
                 if (timeLog.Step == Step.PAUSE) continue;
 
                 var stepDuration = nextTimeLog.DateTime.Subtract(timeLog.DateTime);
-                _stepsDuration[timeLog.Step] = _stepsDuration[timeLog.Step].Add(stepDuration);
+                AddDuration(timeLog.Step, stepDuration);
+                AddDuration(Step.TOTAL, stepDuration);
             }
 
             var lastTimeLog = timeLogs[timeLogs.Count - 1];
@@ -79,7 +79,8 @@ namespace Timer.service {
 
             var now = TimeUtils.ToDateTime(TimeUtils.FormatDateTime(DateTime.Now));
             var lastStepDuration = now.Subtract(lastTimeLog.DateTime);
-            _stepsDuration[lastTimeLog.Step] = _stepsDuration[lastTimeLog.Step].Add(lastStepDuration);
+            AddDuration(lastTimeLog.Step, lastStepDuration);
+            AddDuration(Step.TOTAL, lastStepDuration);
         }
 
         private void InitializeStepsDuration() {
@@ -88,9 +89,12 @@ namespace Timer.service {
                 [Step.LOAD] = new TimeSpan(),
                 [Step.EDIT] = new TimeSpan(),
                 [Step.FREEZE_RELOAD] = new TimeSpan(),
-                [Step.EXPORT] = new TimeSpan()
+                [Step.EXPORT] = new TimeSpan(),
+                [Step.TOTAL] = new TimeSpan()
             };
         }
+
+        private void AddDuration(Step step, TimeSpan duration) => _stepsDuration[step] = _stepsDuration[step].Add(duration);
 
         private void NotifyStepsDuration() {
             foreach (var (step, duration) in _stepsDuration) {

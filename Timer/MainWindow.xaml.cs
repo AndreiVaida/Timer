@@ -75,6 +75,7 @@ namespace Timer {
                     case Step.EDIT: LabelEditTime.Content = timeEvent.Duration.ToString(); break;
                     case Step.FREEZE_RELOAD: LabelFreezeReloadTime.Content = timeEvent.Duration.ToString(); break;
                     case Step.EXPORT: LabelExportTime.Content = timeEvent.Duration.ToString(); break;
+                    case Step.TOTAL: LabelTotalTime.Content = timeEvent.Duration.ToString(); break;
                 }
             });
         }
