@@ -4,6 +4,7 @@ Timer logs and calculates the time spent on tasks. It's designed for video editi
 <br>
 Download the executable: https://drive.google.com/drive/folders/1jRGDC-J8TB_M-BRELUQnkWROjGm3s4oI?usp=sharing
 <br><br>
+![Screenshot](Resources/Screenshot 2022-10-25 214415.png?raw=true "Screenshot")
 ## Instructions
 1. Input the activity name.
    1. Note: At startup, Timer will load your latest activity and you can skip Step 2.
