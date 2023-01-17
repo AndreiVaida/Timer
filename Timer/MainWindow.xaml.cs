@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
@@ -18,6 +19,8 @@ namespace Timer {
         private readonly TimeService _timeService;
         private readonly IScheduler _uiScheduler;
         private IList<Button> _buttonList;
+        private const double PressedButtonOpacity = 0.5;
+        private const double DefaultButtonOpacity = 1;
 
         public MainWindow() {
             InitializeComponent();
@@ -62,7 +65,7 @@ namespace Timer {
 
         private void OnStepButtonClick(Button button, Step step) {
             _timeService.StartStep(step);
-            MakeSingleButtonPressed(button);
+            HandleButtonsPressState(button);
         }
 
         private void InitializeButtonList() {
@@ -75,13 +78,53 @@ namespace Timer {
                 ButtonPause
             };
 
-            MakeSingleButtonPressed(null);
+            HandleButtonsPressState(null);
         }
 
-        private void MakeSingleButtonPressed(Button? pressedButton) {
-            foreach (var button in _buttonList) {
-                button.Opacity = button == pressedButton ? 0.5 : 1;
+        private void HandleButtonsPressState(Button? pressedButton) {
+            if (pressedButton == null)
+            {
+                UnpressButtons(_buttonList);
+                return;
             }
+
+            if (pressedButton == ButtonPause)
+            {
+                PressButton(pressedButton);
+                UnpressButtons(_buttonList.Except(new List<Button> { pressedButton }).ToList());
+                return;
+            }
+
+            if (IsParalelTask(pressedButton))
+            {
+                if (IsPressed(pressedButton))
+                    UnpressButton(pressedButton);
+                else
+                {
+                    PressButton(pressedButton);
+                    UnpressButtons(_buttonList.Except(new List<Button> { pressedButton }).ToList());
+                }
+            }
+            else
+            {
+                PressButton(pressedButton);
+                var buttonsToUnpress = _buttonList.Where(btn => !IsParalelTask(btn) && btn != pressedButton).ToList();
+                UnpressButtons(buttonsToUnpress);
+            }
+        }
+
+        private bool IsParalelTask(Button? button) => button == ButtonWaitForReview;
+
+        private static bool IsPressed(Button button) => button.Opacity == PressedButtonOpacity;
+
+        private static void PressButton(Button button) => button.Opacity = PressedButtonOpacity;
+
+        private static void UnpressButton(Button button) => button.Opacity = DefaultButtonOpacity;
+
+        private static void UnpressButtons(IList<Button> buttonList)
+        {
+            foreach (var button in buttonList)
+                UnpressButton(button);
         }
 
         private void SubscribeToTimeEvents() {
@@ -120,7 +163,7 @@ namespace Timer {
 
         private void UpdateWindow(TimeLog? timeLog) {
             var buttonToPress = GetButtonForStep(timeLog?.Step);
-            MakeSingleButtonPressed(buttonToPress);
+            HandleButtonsPressState(buttonToPress);
             UpdateStartActivityTime(timeLog?.DateTime);
         }
 
