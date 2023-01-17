@@ -41,23 +41,23 @@ namespace Timer {
             if (!IsActivityNameValid()) return;
             var button = (Button)sender;
 
-            if (button == ButtonDownload)
-                OnStepButtonClick(button, Step.DOWNLOAD);
+            if (button == ButtonDiscuss)
+                OnStepButtonClick(button, Step.DISCUSS);
 
-            if (button == ButtonLoad)
-                OnStepButtonClick(button, Step.LOAD);
+            if (button == ButtonImplement)
+                OnStepButtonClick(button, Step.IMPLEMENT);
 
-            if (button == ButtonEdit)
-                OnStepButtonClick(button, Step.EDIT);
+            if (button == ButtonWaitForReview)
+                OnStepButtonClick(button, Step.WAIT_FOR_REVIEW);
 
-            if (button == ButtonFreezeReload)
-                OnStepButtonClick(button, Step.FREEZE_RELOAD);
+            if (button == ButtonResolveComments)
+                OnStepButtonClick(button, Step.RESOLVE_COMMENTS);
+
+            if (button == ButtonDoReview)
+                OnStepButtonClick(button, Step.DO_REVIEW);
 
             if (button == ButtonPause)
                 OnStepButtonClick(button, Step.PAUSE);
-
-            if (button == ButtonExport)
-                OnStepButtonClick(button, Step.EXPORT);
         }
 
         private void OnStepButtonClick(Button button, Step step) {
@@ -67,12 +67,12 @@ namespace Timer {
 
         private void InitializeButtonList() {
             _buttonList = new List<Button> {
-                ButtonDownload,
-                ButtonLoad,
-                ButtonEdit,
-                ButtonFreezeReload,
-                ButtonPause,
-                ButtonExport
+                ButtonDiscuss,
+                ButtonImplement,
+                ButtonWaitForReview,
+                ButtonResolveComments,
+                ButtonDoReview,
+                ButtonPause
             };
 
             MakeSingleButtonPressed(null);
@@ -89,11 +89,11 @@ namespace Timer {
                 .ObserveOn(_uiScheduler)
                 .Subscribe(timeEvent => {
                     switch(timeEvent.Step) {
-                        case Step.DOWNLOAD: LabelDownloadTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.LOAD: LabelLoadingTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.EDIT: LabelEditTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.FREEZE_RELOAD: LabelFreezeReloadTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.EXPORT: LabelExportTime.Content = timeEvent.Duration.ToString(); break;
+                        case Step.DISCUSS: LabelDiscussTime.Content = timeEvent.Duration.ToString(); break;
+                        case Step.IMPLEMENT: LabelImplementTime.Content = timeEvent.Duration.ToString(); break;
+                        case Step.WAIT_FOR_REVIEW: LabelWaitForReviewTime.Content = timeEvent.Duration.ToString(); break;
+                        case Step.RESOLVE_COMMENTS: LabelResolveCommentsTime.Content = timeEvent.Duration.ToString(); break;
+                        case Step.DO_REVIEW: LabelDoReviewTime.Content = timeEvent.Duration.ToString(); break;
                         case Step.TOTAL: LabelTotalTime.Content = timeEvent.Duration.ToString(); break;
                     }
                 });
@@ -109,11 +109,11 @@ namespace Timer {
 
         private Button? GetButtonForStep(Step? step) =>
             step switch {
-                Step.DOWNLOAD => ButtonDownload,
-                Step.LOAD => ButtonLoad,
-                Step.EDIT => ButtonEdit,
-                Step.FREEZE_RELOAD => ButtonFreezeReload,
-                Step.EXPORT => ButtonExport,
+                Step.DISCUSS => ButtonDiscuss,
+                Step.IMPLEMENT => ButtonImplement,
+                Step.WAIT_FOR_REVIEW => ButtonWaitForReview,
+                Step.RESOLVE_COMMENTS => ButtonResolveComments,
+                Step.DO_REVIEW => ButtonDoReview,
                 Step.PAUSE => ButtonPause,
                 _ => null
         };

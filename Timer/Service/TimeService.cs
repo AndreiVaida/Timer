@@ -65,11 +65,11 @@ namespace Timer.service {
 
         private void InitializeStepsDuration() {
             _stepsDuration = new Dictionary<Step, TimeSpan> {
-                [Step.DOWNLOAD] = new TimeSpan(),
-                [Step.LOAD] = new TimeSpan(),
-                [Step.EDIT] = new TimeSpan(),
-                [Step.FREEZE_RELOAD] = new TimeSpan(),
-                [Step.EXPORT] = new TimeSpan(),
+                [Step.DISCUSS] = new TimeSpan(),
+                [Step.IMPLEMENT] = new TimeSpan(),
+                [Step.WAIT_FOR_REVIEW] = new TimeSpan(),
+                [Step.RESOLVE_COMMENTS] = new TimeSpan(),
+                [Step.DO_REVIEW] = new TimeSpan(),
                 [Step.TOTAL] = new TimeSpan()
             };
         }
