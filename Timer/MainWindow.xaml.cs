@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
@@ -8,7 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using Timer.model;
 using Timer.Model;
+using Timer.Repository;
 using Timer.service;
+using Timer.Service;
 using Timer.Utils;
 
 namespace Timer {
@@ -18,14 +20,16 @@ namespace Timer {
     public partial class MainWindow : Window {
         private readonly TimeService _timeService;
         private readonly IScheduler _uiScheduler;
-        private IList<Button> _buttonList;
+        private readonly TimeUtils _timeUtils = new TimeUtilsImpl();
+        private IList<Button> _singularButtons;
+        private IList<Button> _parallelButtons;
         private const double PressedButtonOpacity = 0.5;
         private const double DefaultButtonOpacity = 1;
 
         public MainWindow() {
             InitializeComponent();
-            InitializeButtonList();
-            _timeService = new();
+            InitializeButtonLists();
+            _timeService = new TimeServiceImpl(new TimeRepositoryImpl(_timeUtils), _timeUtils);
             _uiScheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
             SubscribeToTimeEvents();
             LoadLatestActivity();
@@ -37,27 +41,37 @@ namespace Timer {
             if (!IsActivityNameValid()) return;
             var timeLog = _timeService.CreateActivity(InputActivityName.Text);
 
-            UpdateWindow(timeLog);
+            HandleButtonsPressState(null);
+
+            if (timeLog?.Step == Step.PAUSE)
+                UpdateWindow(timeLog);
         }
 
         private void OnStepButtonClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
             var button = (Button)sender;
 
-            if (button == ButtonDiscuss)
-                OnStepButtonClick(button, Step.DISCUSS);
+            if (button == ButtonInvestigate)
+                OnStepButtonClick(button, Step.INVESTIGATE);
 
             if (button == ButtonImplement)
                 OnStepButtonClick(button, Step.IMPLEMENT);
 
-            if (button == ButtonWaitForReview)
-                OnStepButtonClick(button, Step.WAIT_FOR_REVIEW);
+            if (button == ButtonWaitForReview) {
+                var step = IsPressed(button) ? Step.WAIT_FOR_REVIEW__END : Step.WAIT_FOR_REVIEW__START;
+                OnStepButtonClick(button, step);
+            }
 
             if (button == ButtonResolveComments)
                 OnStepButtonClick(button, Step.RESOLVE_COMMENTS);
 
             if (button == ButtonDoReview)
                 OnStepButtonClick(button, Step.DO_REVIEW);
+
+            if (button == ButtonLoading) {
+                var step = IsPressed(button) ? Step.LOADING__END : Step.LOADING__START;
+                OnStepButtonClick(button, step);
+            }
 
             if (button == ButtonPause)
                 OnStepButtonClick(button, Step.PAUSE);
@@ -68,77 +82,82 @@ namespace Timer {
             HandleButtonsPressState(button);
         }
 
-        private void InitializeButtonList() {
-            _buttonList = new List<Button> {
-                ButtonDiscuss,
+        private void InitializeButtonLists() {
+            _singularButtons = new List<Button> {
+                ButtonInvestigate,
                 ButtonImplement,
-                ButtonWaitForReview,
                 ButtonResolveComments,
                 ButtonDoReview,
                 ButtonPause
+            };
+            _parallelButtons = new List<Button> {
+                ButtonWaitForReview,
+                ButtonLoading
             };
 
             HandleButtonsPressState(null);
         }
 
         private void HandleButtonsPressState(Button? pressedButton) {
-            if (pressedButton == null)
-            {
-                UnpressButtons(_buttonList);
+            if (pressedButton == null) {
+                Unpress(_singularButtons);
+                Unpress(_parallelButtons);
                 return;
             }
 
-            if (pressedButton == ButtonPause)
-            {
-                PressButton(pressedButton);
-                UnpressButtons(_buttonList.Except(new List<Button> { pressedButton }).ToList());
+            if (pressedButton == ButtonPause) {
+                Press(pressedButton);
+                Unpress(_singularButtons.Except(pressedButton));
+                Unpress(_parallelButtons);
                 return;
             }
 
-            if (IsParalelTask(pressedButton))
-            {
+            if (IsParallelTask(pressedButton)) {
                 if (IsPressed(pressedButton))
-                    UnpressButton(pressedButton);
-                else
-                {
-                    PressButton(pressedButton);
-                    UnpressButtons(_buttonList.Except(new List<Button> { pressedButton }).ToList());
+                    Unpress(pressedButton);
+                else {
+                    Press(pressedButton);
+                    Unpress(_singularButtons);
                 }
             }
-            else
-            {
-                PressButton(pressedButton);
-                var buttonsToUnpress = _buttonList.Where(btn => !IsParalelTask(btn) && btn != pressedButton).ToList();
-                UnpressButtons(buttonsToUnpress);
+            else {
+                Press(pressedButton);
+                Unpress(_singularButtons.Except(pressedButton));
             }
         }
 
-        private bool IsParalelTask(Button? button) => button == ButtonWaitForReview;
+        private bool IsParallelTask(Button button) => _parallelButtons.Contains(button);
 
         private static bool IsPressed(Button button) => button.Opacity == PressedButtonOpacity;
 
-        private static void PressButton(Button button) => button.Opacity = PressedButtonOpacity;
+        private static void Press(Button button) => button.Opacity = PressedButtonOpacity;
 
-        private static void UnpressButton(Button button) => button.Opacity = DefaultButtonOpacity;
+        private static void Unpress(Button button) => button.Opacity = DefaultButtonOpacity;
 
-        private static void UnpressButtons(IList<Button> buttonList)
-        {
+        private static void Unpress(IList<Button> buttonList) {
             foreach (var button in buttonList)
-                UnpressButton(button);
+                Unpress(button);
         }
 
         private void SubscribeToTimeEvents() {
             _timeService.TimeUpdates
                 .ObserveOn(_uiScheduler)
                 .Subscribe(timeEvent => {
-                    switch(timeEvent.Step) {
-                        case Step.DISCUSS: LabelDiscussTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.IMPLEMENT: LabelImplementTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.WAIT_FOR_REVIEW: LabelWaitForReviewTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.RESOLVE_COMMENTS: LabelResolveCommentsTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.DO_REVIEW: LabelDoReviewTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.TOTAL: LabelTotalTime.Content = timeEvent.Duration.ToString(); break;
-                    }
+                    var (label, button) = timeEvent.Step switch {
+                        Step.INVESTIGATE => (LabelInvestigateTime, ButtonInvestigate),
+                        Step.IMPLEMENT => (LabelImplementTime, ButtonImplement),
+                        Step.WAIT_FOR_REVIEW__START or Step.WAIT_FOR_REVIEW__END => (LabelWaitForReviewTime, ButtonWaitForReview),
+                        Step.RESOLVE_COMMENTS => (LabelResolveCommentsTime, ButtonResolveComments),
+                        Step.DO_REVIEW => (LabelDoReviewTime, ButtonDoReview),
+                        Step.LOADING__START or Step.LOADING__END => (LabelLoadingTime, ButtonLoading),
+                        Step.TOTAL => (LabelTotalTime, null),
+                        _ => throw new InvalidEnumArgumentException($"Unhandled Step of TimeEvent: {timeEvent}")
+                    };
+
+                    var duration = timeEvent.Duration.ToString();
+                    label.Content = timeEvent.Step.IsParallelStart() ? $"🔄 {duration}" : duration;
+                    if (button != null && timeEvent.IsActive)
+                        Press(button);
                 });
         }
 
@@ -147,16 +166,18 @@ namespace Timer {
             if (activityName == null) return;
 
             InputActivityName.Text = activityName;
-            UpdateWindow(timeLog);
+            if (timeLog?.Step == Step.PAUSE)
+                Press(ButtonPause);
         }
 
         private Button? GetButtonForStep(Step? step) =>
             step switch {
-                Step.DISCUSS => ButtonDiscuss,
+                Step.INVESTIGATE => ButtonInvestigate,
                 Step.IMPLEMENT => ButtonImplement,
-                Step.WAIT_FOR_REVIEW => ButtonWaitForReview,
+                Step.WAIT_FOR_REVIEW__START or Step.WAIT_FOR_REVIEW__END => ButtonWaitForReview,
                 Step.RESOLVE_COMMENTS => ButtonResolveComments,
                 Step.DO_REVIEW => ButtonDoReview,
+                Step.LOADING__START or Step.LOADING__END => ButtonLoading,
                 Step.PAUSE => ButtonPause,
                 _ => null
         };
@@ -168,7 +189,7 @@ namespace Timer {
         }
 
         private void UpdateStartActivityTime(DateTime? dateTime) {
-            LabelStartActivityTime.Content = dateTime == null ? string.Empty : TimeUtils.FormatDateTime((DateTime)dateTime);
+            LabelStartActivityTime.Content = dateTime == null ? string.Empty : _timeUtils.FormatDateTime((DateTime)dateTime);
         }
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace Timer.model {
-    public enum Step {
-        DISCUSS,
-        IMPLEMENT,
-        WAIT_FOR_REVIEW,
-        RESOLVE_COMMENTS,
-        DO_REVIEW,
-        PAUSE,
-        TOTAL
-    }
+﻿namespace Timer.model;
+
+public enum Step {
+    INVESTIGATE,
+    IMPLEMENT,
+    WAIT_FOR_REVIEW__START,
+    WAIT_FOR_REVIEW__END,
+    RESOLVE_COMMENTS,
+    DO_REVIEW,
+    LOADING__START,
+    LOADING__END,
+    PAUSE,
+    TOTAL
 }
