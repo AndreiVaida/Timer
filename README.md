@@ -4,7 +4,7 @@ Timer logs and calculates the time spent on a story based on your logging. This 
 <br>
 Download the executable: https://drive.google.com/drive/folders/1jRGDC-J8TB_M-BRELUQnkWROjGm3s4oI?usp=sharing
 <br><br>
-![Screenshot](https://github.com/AndreiVaida/Timer/blob/Programming/Resources/Screenshot%2023-02-05%134158.png?raw=true "Screenshot")
+![Screenshot](https://github.com/AndreiVaida/Timer/blob/Programming/Resources/Screenshot%202023-02-05%20134158.png?raw=true "Screenshot")
 ## Instructions
 1. Input the activity name. It can be the Jira ID.
    1. Note: At startup, Timer will load your latest activity, and you can skip Step 2.
