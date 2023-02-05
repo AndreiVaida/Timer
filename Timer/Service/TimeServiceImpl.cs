@@ -174,6 +174,7 @@ public class TimeServiceImpl : TimeService  {
 
     private void InitializeStepsDuration() {
         _stepsDuration = new Dictionary<Step, TimeSpan> {
+            [Step.MEETING] = new(),
             [Step.INVESTIGATE] = new(),
             [Step.IMPLEMENT] = new(),
             [Step.WAIT_FOR_REVIEW__START] = new(),

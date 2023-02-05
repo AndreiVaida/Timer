@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Timer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="380" Width="1100" Background="#FF09364C">
+        Title="MainWindow" Height="380" Width="1250" Background="#FF09364C">
     <Grid>
         <Grid HorizontalAlignment="Center" Height="75" Margin="0,10,0,0" VerticalAlignment="Top" Width="372">
             <Label Content="Timer" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Agent Orange" FontSize="26"/>
@@ -15,12 +15,16 @@
             <Label Content="Activitate:" Width="100" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
             <TextBox x:Name="InputActivityName" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,0,130,0" />
             <Label Content=".csv" Width="50" Margin="726,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
-            <Button Margin="1010,8,10,5" Click="OnCreateActivityClick">Creează</Button>
+            <Button Margin="1160,8,10,5" Click="OnCreateActivityClick">Creează</Button>
         </Grid>
         <DockPanel Height="100" Margin="10,150,10,0" VerticalAlignment="Top">
             <Grid Height="60" Margin="10 0 10 0">
-                <Button x:Name="ButtonInvestigate" Content="👨‍🎓 Investighez" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
-                <Label Name="LabelInvestigateTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                <Button x:Name="ButtonMeeting" Content="👨‍🎓 Ceremonie" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
+                <Label Name="LabelMeetingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+            </Grid>
+            <Grid Height="60" Margin="10 0 10 0">
+                <Button x:Name="ButtonInvestigate" Content="🤔 Investighez" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />
+                <Label Name="LabelInvestigateTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
                 <Button x:Name="ButtonImplement" Content="✏ Implementez" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />

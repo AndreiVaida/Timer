@@ -1,6 +1,7 @@
 ﻿namespace Timer.model;
 
 public enum Step {
+    MEETING,
     INVESTIGATE,
     IMPLEMENT,
     WAIT_FOR_REVIEW__START,
