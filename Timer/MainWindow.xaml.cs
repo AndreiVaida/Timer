@@ -65,8 +65,11 @@ namespace Timer {
                 OnStepButtonClick(button, step);
             }
 
-            if (button == ButtonResolveComments)
+            if (button == ButtonResolveComments) {
+                if (IsPressed(ButtonWaitForReview))
+                    OnStepButtonClick(ButtonWaitForReview, Step.WAIT_FOR_REVIEW__END);
                 OnStepButtonClick(button, Step.RESOLVE_COMMENTS);
+            }
 
             if (button == ButtonDoReview)
                 OnStepButtonClick(button, Step.DO_REVIEW);
