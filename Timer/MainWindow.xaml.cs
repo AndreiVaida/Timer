@@ -54,6 +54,9 @@ namespace Timer {
             if (button == ButtonMeeting)
                 OnStepButtonClick(button, Step.MEETING);
 
+            if (button == ButtonOther)
+                OnStepButtonClick(button, Step.OTHER);
+
             if (button == ButtonInvestigate)
                 OnStepButtonClick(button, Step.INVESTIGATE);
 
@@ -91,6 +94,7 @@ namespace Timer {
         private void InitializeButtonLists() {
             _singularButtons = new List<Button> {
                 ButtonMeeting,
+                ButtonOther,
                 ButtonInvestigate,
                 ButtonImplement,
                 ButtonResolveComments,
@@ -152,6 +156,7 @@ namespace Timer {
                 .Subscribe(timeEvent => {
                     var (label, button) = timeEvent.Step switch {
                         Step.MEETING => (LabelMeetingTime, ButtonMeeting),
+                        Step.OTHER => (LabelOtherTime, ButtonOther),
                         Step.INVESTIGATE => (LabelInvestigateTime, ButtonInvestigate),
                         Step.IMPLEMENT => (LabelImplementTime, ButtonImplement),
                         Step.WAIT_FOR_REVIEW__START or Step.WAIT_FOR_REVIEW__END => (LabelWaitForReviewTime, ButtonWaitForReview),
@@ -181,6 +186,7 @@ namespace Timer {
         private Button? GetButtonForStep(Step? step) =>
             step switch {
                 Step.MEETING => ButtonMeeting,
+                Step.OTHER => ButtonOther,
                 Step.INVESTIGATE => ButtonInvestigate,
                 Step.IMPLEMENT => ButtonImplement,
                 Step.WAIT_FOR_REVIEW__START or Step.WAIT_FOR_REVIEW__END => ButtonWaitForReview,

@@ -41,6 +41,7 @@ public class TimeServiceImplTests : ReactiveTest {
         new object[] {
             new List<TimeLog> {
                 new(Step.MEETING,           new DateTime(2023, 01, 28, 10, 18, 00)),
+                new(Step.OTHER,             new DateTime(2023, 01, 28, 10, 28, 00)),
                 new(Step.INVESTIGATE,       new DateTime(2023, 01, 28, 11, 18, 00)),
                 new(Step.IMPLEMENT,         new DateTime(2023, 01, 28, 11, 18, 01)),
                 new(Step.RESOLVE_COMMENTS,  new DateTime(2023, 01, 28, 11, 19, 00)),
@@ -48,7 +49,8 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.PAUSE,             new DateTime(2023, 01, 28, 12, 18, 03))
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.FromHours(1), false),
+                new(Step.MEETING,                   TimeSpan.FromMinutes(10), false),
+                new(Step.OTHER,                     TimeSpan.FromMinutes(50), false),
                 new(Step.INVESTIGATE,               TimeSpan.FromSeconds(1), false),
                 new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(59), false),
                 new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.Zero, false),
@@ -73,6 +75,7 @@ public class TimeServiceImplTests : ReactiveTest {
             },
             new List<TimeEvent> {
                 new(Step.MEETING,                   TimeSpan.Zero, false),
+                new(Step.OTHER,                     TimeSpan.Zero, false),
                 new(Step.INVESTIGATE,               TimeSpan.FromSeconds(2).Add(TimeSpan.FromMinutes(59)), false),
                 new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(28).Add(TimeSpan.FromSeconds(3)), false),
                 new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.Zero, false),
@@ -96,6 +99,7 @@ public class TimeServiceImplTests : ReactiveTest {
             },
             new List<TimeEvent> {
                 new(Step.MEETING,                   TimeSpan.Zero, false),
+                new(Step.OTHER,                     TimeSpan.Zero, false),
                 new(Step.INVESTIGATE,               TimeSpan.Zero, false),
                 new(Step.IMPLEMENT,                 TimeSpan.Zero, false),
                 new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1), false),
@@ -119,6 +123,7 @@ public class TimeServiceImplTests : ReactiveTest {
             },
             new List<TimeEvent> {
                 new(Step.MEETING,                   TimeSpan.Zero, false),
+                new(Step.OTHER,                     TimeSpan.Zero, false),
                 new(Step.INVESTIGATE,               TimeSpan.Zero, false),
                 new(Step.IMPLEMENT,                 TimeSpan.Zero, false),
                 new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1).Add(TimeSpan.FromHours(1)), false),
@@ -150,6 +155,7 @@ public class TimeServiceImplTests : ReactiveTest {
             },
             new List<TimeEvent> {
                 new(Step.MEETING,                   TimeSpan.Zero, false),
+                new(Step.OTHER,                     TimeSpan.Zero, false),
                 new(Step.INVESTIGATE,               TimeSpan.FromMinutes(65), false),
                 new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
                 new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromMinutes(124).Add(TimeSpan.FromSeconds(3)), false),
@@ -181,6 +187,7 @@ public class TimeServiceImplTests : ReactiveTest {
             },
             new List<TimeEvent> {
                 new(Step.MEETING,                   TimeSpan.Zero, false),
+                new(Step.OTHER,                     TimeSpan.Zero, false),
                 new(Step.INVESTIGATE,               TimeSpan.FromMinutes(65), false),
                 new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
                 new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1)
@@ -208,6 +215,7 @@ public class TimeServiceImplTests : ReactiveTest {
             },
             new List<TimeEvent> {
                 new(Step.MEETING,                   TimeSpan.Zero, false),
+                new(Step.OTHER,                     TimeSpan.Zero, false),
                 new(Step.INVESTIGATE,               TimeSpan.FromMinutes(10), true),
                 new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
                 new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(11).Add(TimeSpan.FromSeconds(59))), true),

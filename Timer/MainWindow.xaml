@@ -17,10 +17,16 @@
             <Label Content=".csv" Width="50" Margin="726,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
             <Button Margin="1160,8,10,5" Click="OnCreateActivityClick">Creează</Button>
         </Grid>
-        <DockPanel Height="100" Margin="10,150,10,0" VerticalAlignment="Top">
-            <Grid Height="60" Margin="10 0 10 0">
-                <Button x:Name="ButtonMeeting" Content="👨‍🎓 Ceremonie" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
-                <Label Name="LabelMeetingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+        <DockPanel Height="120" Margin="10,150,10,0" VerticalAlignment="Top">
+            <Grid Height="120" Margin="10 0 10 0">
+                <Grid Height="60" VerticalAlignment="Top">
+                    <Button x:Name="ButtonMeeting" Content="👨‍👩‍👧‍👦 Ceremonie" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
+                    <Label Name="LabelMeetingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                </Grid>
+                <Grid Height="60" VerticalAlignment="Bottom">
+                    <Button x:Name="ButtonOther" Content="👨‍🎓 Altele" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
+                    <Label Name="LabelOtherTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                </Grid>
             </Grid>
             <Grid Height="60" Margin="10 0 10 0">
                 <Button x:Name="ButtonInvestigate" Content="🤔 Investighez" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />

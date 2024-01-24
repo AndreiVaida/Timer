@@ -2,6 +2,7 @@
 
 public enum Step {
     MEETING,
+    OTHER,
     INVESTIGATE,
     IMPLEMENT,
     WAIT_FOR_REVIEW__START,
