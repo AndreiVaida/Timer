@@ -10,4 +10,5 @@ public interface TimeRepository {
     public void AddStep(DateTime dateTime, Step step);
     public IList<TimeLog> GetTimeLogs();
     public string? GetLastActivityName();
+    List<string> GetLastActivities(int numberOfActivities);
 }

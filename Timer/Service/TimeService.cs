@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Timer.model;
 using Timer.Model;
 
@@ -9,4 +10,5 @@ public interface TimeService {
     public TimeLog? CreateActivity(string activityName);
     public void StartStep(Step step);
     public (string?, TimeLog?) LoadLatestActivity();
+    List<string> GetLatestActivities(int numberOfActivities);
 }

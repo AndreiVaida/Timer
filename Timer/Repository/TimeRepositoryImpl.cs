@@ -49,12 +49,14 @@ public class TimeRepositoryImpl : TimeRepository {
             .Select(MapLineToTimeLog)
             .ToList();
 
-    public string? GetLastActivityName() =>
+    public string? GetLastActivityName() => GetLastActivities(1).FirstOrDefault();
+
+    public List<string> GetLastActivities(int numberOfActivities) =>
         new DirectoryInfo(DataFolderPath).GetFiles()
             .OrderByDescending(file => file.LastWriteTime)
-            .Take(1)
+            .Take(numberOfActivities)
             .Select(file => Path.GetFileNameWithoutExtension(file.Name))
-            .FirstOrDefault();
+            .ToList();
 
     private static bool IsEmptyFile(string filePath) => !File.Exists(filePath) || new FileInfo(filePath).Length == 0;
 

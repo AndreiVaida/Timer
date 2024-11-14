@@ -28,4 +28,6 @@ public static class Extensions {
         Step.LOADING__END => Step.LOADING__START,
         _ => throw new InvalidEnumArgumentException($"The end Step is not parallel: ${endStep}")
     };
+
+    public static bool IsNullOrEmpty(this string? s) => s is null or "";
 }

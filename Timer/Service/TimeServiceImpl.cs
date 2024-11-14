@@ -58,6 +58,8 @@ public class TimeServiceImpl : TimeService  {
         return (activityName, _timeLogs!.LastOrDefault());
     }
 
+    public List<string> GetLatestActivities(int numberOfActivities) => _timeRepository.GetLastActivities(numberOfActivities);
+
     private void CalculateLoggedStepsDurationAndTotal() {
         _timeLogs = _timeRepository.GetTimeLogs();
         InitializeStepsDuration();

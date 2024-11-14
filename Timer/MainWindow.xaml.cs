@@ -6,6 +6,8 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Timer.model;
 using Timer.Model;
 using Timer.Repository;
@@ -25,6 +27,11 @@ namespace Timer {
         private IList<Button> _parallelButtons;
         private const double PressedButtonOpacity = 0.5;
         private const double DefaultButtonOpacity = 1;
+        private readonly Color _activityAnimatedBackgroundColor = Color.FromRgb(37, 150, 190);
+        private readonly Color _activityAnimatedBackgroundColor2 = Color.FromRgb(37, 190, 92);
+        private readonly Brush _activityForegroundBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        private readonly Brush _activityBackgroundBrush = new SolidColorBrush(Color.FromRgb(37, 150, 190));
+        private string? _activeActivityName;
 
         public MainWindow() {
             InitializeComponent();
@@ -33,22 +40,18 @@ namespace Timer {
             _uiScheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
             SubscribeToTimeEvents();
             LoadLatestActivity();
+            LoadLatestActivities();
         }
 
-        private bool IsActivityNameValid() => InputActivityName.Text.Trim().Length > 0;
+        private static bool IsActivityNameValid(string? name) => !(name?.Trim()).IsNullOrEmpty();
 
-        private void OnCreateActivityClick(object sender, RoutedEventArgs e) {
-            if (!IsActivityNameValid()) return;
-            var timeLog = _timeService.CreateActivity(InputActivityName.Text);
-
-            HandleButtonsPressState(null);
-
-            if (timeLog?.Step == Step.PAUSE)
-                UpdateWindow(timeLog);
+        public void OnCreateActivityClick(object sender, RoutedEventArgs e)
+        {
+            StartActivity(InputActivityName.Text);
         }
 
-        private void OnStepButtonClick(object sender, RoutedEventArgs e) {
-            if (!IsActivityNameValid()) return;
+        public void OnStepButtonClick(object sender, RoutedEventArgs e) {
+            if (!IsActivityNameValid(_activeActivityName)) return;
             var button = (Button)sender;
 
             if (button == ButtonMeeting)
@@ -84,6 +87,33 @@ namespace Timer {
 
             if (button == ButtonPause)
                 OnStepButtonClick(button, Step.PAUSE);
+        }
+
+        public void OnSelectActivityClick(object sender, RoutedEventArgs e) {
+            var button = sender as Button;
+            StartActivity(button!.Tag.ToString()!);
+        }
+
+        public void OnSelectPinnedActivityClick(object sender, RoutedEventArgs e)
+        {
+            OnSelectActivityClick(sender, e);
+            OnStepButtonClick(ButtonImplement, Step.IMPLEMENT);
+            LoadLatestActivities();
+        }
+
+        private void StartActivity(string activityName)
+        {
+            if (!IsActivityNameValid(activityName)) return;
+            _activeActivityName = activityName;
+            InputActivityName.Text = activityName;
+            var timeLog = _timeService.CreateActivity(activityName);
+
+            HandleButtonsPressState(null);
+
+            if (timeLog?.Step == Step.PAUSE)
+                UpdateWindow(timeLog);
+
+            LoadLatestActivities();
         }
 
         private void OnStepButtonClick(Button button, Step step) {
@@ -141,7 +171,7 @@ namespace Timer {
 
         private static bool IsPressed(Button button) => button.Opacity == PressedButtonOpacity;
 
-        private static void Press(Button button) => button.Opacity = PressedButtonOpacity;
+        private static void Press(Button button, double opacity = PressedButtonOpacity) => button.Opacity = opacity;
 
         private static void Unpress(Button button) => button.Opacity = DefaultButtonOpacity;
 
@@ -174,11 +204,58 @@ namespace Timer {
                 });
         }
 
+        private void LoadLatestActivities()
+        {
+            ActivitiesListBox.Items.Clear();
+
+            var activities = _timeService.GetLatestActivities(20);
+            activities.ForEach(activityName => {
+                var activityButton = CreateActivityButton(activityName);
+                ActivitiesListBox.Items.Add(activityButton);
+            });
+        }
+
+        private Button CreateActivityButton(string activityName)
+        {
+            var button = new Button
+            {
+                Content = activityName,
+                Tag = activityName,
+                Background = _activityBackgroundBrush,
+                Foreground = _activityForegroundBrush,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            button.Click += OnSelectActivityClick;
+
+            if (activityName == _activeActivityName) {
+                AnimateButtonBackground(button);
+                Press(button, 0.75);
+            }
+
+            return button;
+        }
+
+        private void AnimateButtonBackground(Button button)
+        {
+            var colorAnimation = new ColorAnimation
+            {
+                From = _activityAnimatedBackgroundColor2,
+                To = _activityAnimatedBackgroundColor,
+                Duration = TimeSpan.FromSeconds(1),
+                AutoReverse = true,
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+            button.Background = _activityBackgroundBrush.Clone();
+            button.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+        }
+
         private void LoadLatestActivity() {
             var (activityName, timeLog) = _timeService.LoadLatestActivity();
             if (activityName == null) return;
 
+            _activeActivityName = activityName;
             InputActivityName.Text = activityName;
+
             if (timeLog?.Step == Step.PAUSE)
                 Press(ButtonPause);
         }
@@ -200,11 +277,6 @@ namespace Timer {
         private void UpdateWindow(TimeLog? timeLog) {
             var buttonToPress = GetButtonForStep(timeLog?.Step);
             HandleButtonsPressState(buttonToPress);
-            UpdateStartActivityTime(timeLog?.DateTime);
-        }
-
-        private void UpdateStartActivityTime(DateTime? dateTime) {
-            LabelStartActivityTime.Content = dateTime == null ? string.Empty : _timeUtils.FormatDateTime((DateTime)dateTime);
         }
     }
 }
