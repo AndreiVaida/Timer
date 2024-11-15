@@ -8,7 +8,7 @@ namespace Timer.Repository;
 public interface TimeRepository {
     public void CreateActivity(string activityName);
     public void AddStep(DateTime dateTime, Step step);
-    public IList<TimeLog> GetTimeLogs();
+    public IList<TimeLog> GetTimeLogs(string? activityName = null);
     public string? GetLastActivityName();
     List<string> GetLastActivities(int numberOfActivities);
 }

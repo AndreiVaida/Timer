@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
@@ -32,6 +33,7 @@ namespace Timer {
         private readonly Brush _activityForegroundBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         private readonly Brush _activityBackgroundBrush = new SolidColorBrush(Color.FromRgb(37, 150, 190));
         private string? _activeActivityName;
+        private readonly Dictionary<DayOfWeek, Tuple<TextBlock, ListBox>> _weekDaysControls;
 
         public MainWindow() {
             InitializeComponent();
@@ -41,6 +43,8 @@ namespace Timer {
             SubscribeToTimeEvents();
             LoadLatestActivity();
             LoadLatestActivities();
+            _weekDaysControls = InitWeekDaysControls();
+            LoadWeekSummary();
         }
 
         private static bool IsActivityNameValid(string? name) => !(name?.Trim()).IsNullOrEmpty();
@@ -210,21 +214,14 @@ namespace Timer {
 
             var activities = _timeService.GetLatestActivities(20);
             activities.ForEach(activityName => {
-                var activityButton = CreateActivityButton(activityName);
+                var activityButton = CreateClickableActivityButton(activityName);
                 ActivitiesListBox.Items.Add(activityButton);
             });
         }
 
-        private Button CreateActivityButton(string activityName)
+        private Button CreateClickableActivityButton(string activityName)
         {
-            var button = new Button
-            {
-                Content = activityName,
-                Tag = activityName,
-                Background = _activityBackgroundBrush,
-                Foreground = _activityForegroundBrush,
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
+            var button = CreateActivityButton(activityName, activityName);
             button.Click += OnSelectActivityClick;
 
             if (activityName == _activeActivityName) {
@@ -234,6 +231,15 @@ namespace Timer {
 
             return button;
         }
+
+        private Button CreateActivityButton(string activityName, object content) => new()
+        {
+            Tag = activityName,
+            Content = content,
+            Background = _activityBackgroundBrush,
+            Foreground = _activityForegroundBrush,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        };
 
         private void AnimateButtonBackground(Button button)
         {
@@ -258,6 +264,43 @@ namespace Timer {
 
             if (timeLog?.Step == Step.PAUSE)
                 Press(ButtonPause);
+        }
+
+        private Dictionary<DayOfWeek, Tuple<TextBlock, ListBox>> InitWeekDaysControls() => new() {
+            {DayOfWeek.Monday, Tuple.Create(TextMondayWorkedTime, MondayActivitiesListBox)},
+            {DayOfWeek.Tuesday, Tuple.Create(TextTuesdayWorkedTime, TuesdayActivitiesListBox)},
+            {DayOfWeek.Wednesday, Tuple.Create(TextWednesdayWorkedTime, WednesdayActivitiesListBox)},
+            {DayOfWeek.Thursday, Tuple.Create(TextThursdayWorkedTime, ThursdayActivitiesListBox)},
+            {DayOfWeek.Friday, Tuple.Create(TextFridayWorkedTime, FridayActivitiesListBox)}
+        };
+
+        private void LoadWeekSummary() {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var activitiesOnEachDay = _timeService.GetWeekSummary(today);
+
+            foreach (var (date, activities) in activitiesOnEachDay)
+            {
+                var (label, listBox) = _weekDaysControls[date.DayOfWeek];
+                SetWorkingTime(label, date, activities);
+                SetActivitySummary(listBox, activities);
+            }
+        }
+
+        private void SetWorkingTime(TextBlock label, DateOnly date, IList<Activity> activities) {
+            var totalDuration = new TimeSpan(activities.Sum(activity => activity.Duration.Ticks));
+            label.Text = $"{date.ToShortDateString()}\n{totalDuration.Hours}h {totalDuration.Minutes}m";
+        }
+
+        private void SetActivitySummary(ListBox listBox, List<Activity> activities) {
+            activities.ForEach(activity =>
+            {
+                var duration = $"{activity.Duration.Hours}h {activity.Duration.Minutes}m";
+                var content = new TextBlock { Text = $"{activity.Name}\n{duration}", TextAlignment = TextAlignment.Center };
+                var button = CreateActivityButton(activity.Name, content);
+                button.Height = 35;
+                button.Click += (_, _) => Clipboard.SetText(activity.Name);
+                listBox.Items.Add(button);
+            });
         }
 
         private Button? GetButtonForStep(Step? step) =>

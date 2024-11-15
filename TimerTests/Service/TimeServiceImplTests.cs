@@ -20,7 +20,7 @@ public class TimeServiceImplTests : ReactiveTest {
     [DynamicData(nameof(SequentialAndParallelStepsTestCases))]
     public void GivenExistingSequentialSteps_WhenCreateActivity_ThenCorrectDurationIsCalculatedForEachStep(List<TimeLog> timeLogs, List<TimeEvent> expectedTimeEvents, DateTime now) {
         var timeRepositoryMock = new Mock<TimeRepository>();
-        timeRepositoryMock.Setup(repo => repo.GetTimeLogs()).Returns(timeLogs);
+        timeRepositoryMock.Setup(repo => repo.GetTimeLogs(null)).Returns(timeLogs);
         var timeUtilsMock = new Mock<TimeUtils>();
         timeUtilsMock.Setup(util => util.CurrentDateTime()).Returns(now);
         var timeService = new TimeServiceImpl(timeRepositoryMock.Object, timeUtilsMock.Object);

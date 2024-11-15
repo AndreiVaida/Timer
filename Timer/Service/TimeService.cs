@@ -11,4 +11,5 @@ public interface TimeService {
     public void StartStep(Step step);
     public (string?, TimeLog?) LoadLatestActivity();
     List<string> GetLatestActivities(int numberOfActivities);
+    IDictionary<DateOnly, List<Activity>> GetWeekSummary(DateOnly dayInWeek, bool includeWeekends = false);
 }

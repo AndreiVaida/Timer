@@ -60,6 +60,40 @@ public class TimeServiceImpl : TimeService  {
 
     public List<string> GetLatestActivities(int numberOfActivities) => _timeRepository.GetLastActivities(numberOfActivities);
 
+    public IDictionary<DateOnly, List<Activity>> GetWeekSummary(DateOnly dayInWeek, bool includeWeekends = false)
+    {
+        var firstDayOfWeek = _timeUtils.GetFirstDayOfWeek(dayInWeek);
+        var lastDayOfWeek = firstDayOfWeek.AddDays(includeWeekends ? 6 : 4);
+        var allTimeLogs = _timeRepository.GetLastActivities(10)
+            .Select(activityName => Tuple.Create(activityName, _timeRepository.GetTimeLogs(activityName)))
+            .ToList();
+
+        var weekSummary = new Dictionary<DateOnly, List<Activity>>();
+        for (var day = firstDayOfWeek; day <= lastDayOfWeek; day = day.AddDays(1))
+        {
+            var activitiesOfDay = GetActivitiesOfDay(day, allTimeLogs);
+            weekSummary.Add(day, activitiesOfDay);
+        }
+
+        return weekSummary;
+    }
+
+    private List<Activity> GetActivitiesOfDay(DateOnly day, IList<Tuple<string, IList<TimeLog>>> allActivities)
+    {
+        var activitiesOfDay = allActivities.Where(timeLogsOfDay => HasWork(day, timeLogsOfDay.Item2)).ToList();
+        return activitiesOfDay.Select(timeLogsOfActivity =>
+        {
+            var name = timeLogsOfActivity.Item1;
+            var allTimeLogs = timeLogsOfActivity.Item2;
+            var timeLogsOfDay = allTimeLogs.Where(timeLog => HasWork(day, timeLog)).ToList();
+            var workedTime = CalculateLoggedTotalStepsDuration(timeLogsOfDay);
+            return new Activity {Name = name, Duration = workedTime};
+        }).ToList();
+    }
+
+    private static bool HasWork(DateOnly day, IList<TimeLog> timeLogs) => timeLogs.Any(timeLog => HasWork(day, timeLog));
+    private static bool HasWork(DateOnly day, TimeLog timeLog) => DateOnly.FromDateTime(timeLog.DateTime).Equals(day);
+
     private void CalculateLoggedStepsDurationAndTotal() {
         _timeLogs = _timeRepository.GetTimeLogs();
         InitializeStepsDuration();
@@ -67,7 +101,8 @@ public class TimeServiceImpl : TimeService  {
         if (_timeLogs.Count < 2) return;
 
         CalculateLoggedStepsDuration();
-        CalculateLoggedTotalStepsDuration();
+        var totalDuration = CalculateLoggedTotalStepsDuration(_timeLogs);
+        AddDuration(Step.TOTAL, totalDuration);
     }
 
     private void CalculateLoggedStepsDuration() {
@@ -80,9 +115,11 @@ public class TimeServiceImpl : TimeService  {
         }
     }
 
-    private void CalculateLoggedTotalStepsDuration() {
+    private TimeSpan CalculateLoggedTotalStepsDuration(IList<TimeLog>? timeLogs = null) {
+        var logs = timeLogs ?? _timeLogs!;
         var sessionStartLogs = new List<TimeLog>();
-        foreach (var timeLog in _timeLogs!) {
+        var totalDuration = TimeSpan.Zero;
+        foreach (var timeLog in logs) {
             if (IsSessionStartLog(timeLog)) {
                 var startLog = timeLog.Step.IsParallel()
                     ? new TimeLog(timeLog.Step, timeLog.DateTime)
@@ -103,7 +140,7 @@ public class TimeServiceImpl : TimeService  {
             else if (IsEndOfAllSessions(sessionStartLogs, timeLog)) {
                 var sessionStartLog = sessionStartLogs.FirstOrDefault() ?? timeLog;
                 var sessionDuration = ComputeStepDuration(sessionStartLog, timeLog);
-                AddDuration(Step.TOTAL, sessionDuration);
+                totalDuration = totalDuration.Add(sessionDuration);
                 sessionStartLogs.Clear();
             }
 
@@ -122,8 +159,10 @@ public class TimeServiceImpl : TimeService  {
             var sessionStartLog = sessionStartLogs.First();
             var nowLog = new TimeLog(sessionStartLog.Step, _timeUtils.CurrentDateTime());
             var sessionDuration = ComputeStepDuration(sessionStartLog, nowLog);
-            AddDuration(Step.TOTAL, sessionDuration);
+            totalDuration = totalDuration.Add(sessionDuration);
         }
+
+        return totalDuration;
     }
 
     private static bool IsSessionStartLog(TimeLog timeLog)
