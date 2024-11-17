@@ -11,7 +11,9 @@ public class TimeUtilsImpl : TimeUtils {
     public DateOnly GetFirstDayOfWeek(DateOnly date)
     {
         // Sunday=0, Monday=1 ...
-        var daysToSubtract = (int)date.DayOfWeek - 1;
+        var daysToSubtract = date.DayOfWeek == DayOfWeek.Sunday
+            ? 6
+            : (int)date.DayOfWeek - 1;
         return date.AddDays(-daysToSubtract);
     }
 }

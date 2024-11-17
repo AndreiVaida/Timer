@@ -34,6 +34,7 @@ namespace Timer {
         private readonly Brush _activityBackgroundBrush = new SolidColorBrush(Color.FromRgb(37, 150, 190));
         private string? _activeActivityName;
         private readonly Dictionary<DayOfWeek, Tuple<TextBlock, ListBox>> _weekDaysControls;
+        private readonly MediaPlayer _copySoundPlayer = CreateMediaPlayer("Pop_sound.mp3");
 
         public MainWindow() {
             InitializeComponent();
@@ -232,6 +233,17 @@ namespace Timer {
             return button;
         }
 
+        private Button CreateActivitySummaryButton(string activityName, TextBlock content) {
+            var button = CreateActivityButton(activityName, content);
+            button.Height = 35;
+            button.Click += (_, _) => Clipboard.SetText(activityName);
+            button.Click += (_, _) => {
+               _copySoundPlayer.Position = TimeSpan.Zero;
+               _copySoundPlayer.Play();
+            };
+            return button;
+        }
+
         private Button CreateActivityButton(string activityName, object content) => new()
         {
             Tag = activityName,
@@ -296,11 +308,15 @@ namespace Timer {
             {
                 var duration = $"{activity.Duration.Hours}h {activity.Duration.Minutes}m";
                 var content = new TextBlock { Text = $"{activity.Name}\n{duration}", TextAlignment = TextAlignment.Center };
-                var button = CreateActivityButton(activity.Name, content);
-                button.Height = 35;
-                button.Click += (_, _) => Clipboard.SetText(activity.Name);
+                var button = CreateActivitySummaryButton(activity.Name, content);
                 listBox.Items.Add(button);
             });
+        }
+
+        private static MediaPlayer CreateMediaPlayer(string audioFileName) {
+            var player = new MediaPlayer();
+            player.Open(new Uri($"Resources/{audioFileName}", UriKind.Relative));
+            return player;
         }
 
         private Button? GetButtonForStep(Step? step) =>
