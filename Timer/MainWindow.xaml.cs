@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using Timer.model;
 using Timer.Model;
 using Timer.Repository;
@@ -241,6 +242,7 @@ namespace Timer {
                _copySoundPlayer.Position = TimeSpan.Zero;
                _copySoundPlayer.Play();
             };
+            button.Click += (_, _) => ChangeButtonContent(button, $"{activityName} copiat!", TimeSpan.FromSeconds(2));
             return button;
         }
 
@@ -265,6 +267,19 @@ namespace Timer {
             };
             button.Background = _activityBackgroundBrush.Clone();
             button.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+        }
+
+        private static void ChangeButtonContent(Button button, string newText, TimeSpan duration) {
+            var originalContent = button.Content;
+            if (originalContent.Equals(newText)) return;
+
+            button.Content = newText;
+            var timer = new DispatcherTimer { Interval = duration };
+            timer.Tick += (s, args) => {
+                button.Content = originalContent;
+                timer.Stop();
+            };
+            timer.Start();
         }
 
         private void LoadLatestActivity() {
