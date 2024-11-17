@@ -36,6 +36,7 @@ namespace Timer {
         private string? _activeActivityName;
         private readonly Dictionary<DayOfWeek, Tuple<TextBlock, ListBox>> _weekDaysControls;
         private readonly MediaPlayer _copySoundPlayer = CreateMediaPlayer("Pop_sound.mp3");
+        private DateOnly _dayOfWeekSummary = DateOnly.FromDateTime(DateTime.Today);
 
         public MainWindow() {
             InitializeComponent();
@@ -100,11 +101,17 @@ namespace Timer {
             StartActivity(button!.Tag.ToString()!);
         }
 
-        public void OnSelectPinnedActivityClick(object sender, RoutedEventArgs e)
-        {
+        public void OnSelectPinnedActivityClick(object sender, RoutedEventArgs e) {
             OnSelectActivityClick(sender, e);
             OnStepButtonClick(ButtonImplement, Step.IMPLEMENT);
             LoadLatestActivities();
+        }
+
+        public void OnChangeWeekSummaryButtonClick(object sender, RoutedEventArgs e) {
+            var button = sender as Button;
+            var daysToAdd = int.Parse((string)button!.Tag) * 7;
+            _dayOfWeekSummary = _dayOfWeekSummary.AddDays(daysToAdd);
+            LoadWeekSummary();
         }
 
         private void StartActivity(string activityName)
@@ -302,14 +309,21 @@ namespace Timer {
         };
 
         private void LoadWeekSummary() {
-            var today = DateOnly.FromDateTime(DateTime.Today);
-            var activitiesOnEachDay = _timeService.GetWeekSummary(today);
+            CleanWeekSummary();
+            var activitiesOnEachDay = _timeService.GetWeekSummary(_dayOfWeekSummary);
 
             foreach (var (date, activities) in activitiesOnEachDay)
             {
                 var (label, listBox) = _weekDaysControls[date.DayOfWeek];
                 SetWorkingTime(label, date, activities);
                 SetActivitySummary(listBox, activities);
+            }
+        }
+
+        private void CleanWeekSummary() {
+            foreach (var (label, listbox) in _weekDaysControls.Values) {
+                label.Text = "00:00:00";
+                listbox.Items.Clear();
             }
         }
 
