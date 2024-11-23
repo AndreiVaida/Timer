@@ -3,16 +3,11 @@ using Timer.model;
 
 namespace Timer.Model;
 
-public class TimeEvent {
-    public readonly Step Step;
-    public readonly TimeSpan Duration;
-    public readonly bool IsActive;
-
-    public TimeEvent(Step step, TimeSpan duration, bool isActive) {
-        Step = step;
-        Duration = duration;
-        IsActive = isActive;
-    }
+public class TimeEvent(string activityName, Step step, TimeSpan duration, bool isActive) {
+    public readonly string ActivityName = activityName;
+    public readonly Step Step = step;
+    public readonly TimeSpan Duration = duration;
+    public readonly bool IsActive = isActive;
 
     public override string ToString() => $"{GetType().Name}{{Step={Step}, Duration={Duration}, IsActive={IsActive}}}";
 

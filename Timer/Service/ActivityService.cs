@@ -5,11 +5,10 @@ using Timer.Model;
 
 namespace Timer.Service;
 
-public interface TimeService {
+public interface ActivityService {
     public IObservable<TimeEvent> TimeUpdates { get; }
-    public TimeLog? CreateActivity(string activityName);
+    public void CreateActivity(string activityName);
     public void StartStep(Step step);
-    public (string?, TimeLog?) LoadLatestActivity();
     List<string> GetLatestActivities(int numberOfActivities);
     IDictionary<DateOnly, List<Activity>> GetWeekSummary(DateOnly dayInWeek, bool includeWeekends = false);
 }

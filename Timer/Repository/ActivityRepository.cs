@@ -5,7 +5,7 @@ using Timer.Model;
 
 namespace Timer.Repository;
 
-public interface TimeRepository {
+public interface ActivityRepository {
     public void CreateActivity(string activityName);
     public void AddStep(DateTime dateTime, Step step);
     public IList<TimeLog> GetTimeLogs(string? activityName = null);

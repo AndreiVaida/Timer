@@ -2,8 +2,8 @@
 
 namespace Timer.Model;
 
-public class Activity
-{
-    public string Name { get; set; }
+public class Activity(string name) {
+    public string Name => name;
+    public bool IsActive { get; set; }
     public TimeSpan Duration { get; set; }
 }

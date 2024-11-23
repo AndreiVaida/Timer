@@ -8,15 +8,13 @@ using Timer.Utils;
 
 namespace Timer.Repository;
 
-public class TimeRepositoryImpl : TimeRepository {
+public class ActivityRepositoryImpl : ActivityRepository {
     private const string DataFolderPath = "Activities";
     private const string CsvHeader = "Date & Time,Step";
     private const string CsvSeparator = ",";
     private string _activeActivityFilePath;
-    private readonly TimeUtils _timeUtils;
 
-    public TimeRepositoryImpl(TimeUtils timeUtils) {
-        _timeUtils = timeUtils;
+    public ActivityRepositoryImpl() {
         CreateDataFolderIfNotExists();
     }
 
@@ -40,7 +38,7 @@ public class TimeRepositoryImpl : TimeRepository {
     public void AddStep(DateTime dateTime, Step step) {
         using var streamWriter = new StreamWriter(_activeActivityFilePath, append: true);
 
-        var formattedDateTime = _timeUtils.FormatDateTime(dateTime);
+        var formattedDateTime = TimeUtils.FormatDateTime(dateTime);
         var line = $"{formattedDateTime}{CsvSeparator}{step}";
         streamWriter.WriteLine(line);
     }
@@ -73,7 +71,7 @@ public class TimeRepositoryImpl : TimeRepository {
     private TimeLog MapLineToTimeLog(string line) {
         var parts = line.Split(CsvSeparator);
         var step = (Step)Enum.Parse(typeof(Step), parts[1]);
-        var dateTime = _timeUtils.ToDateTime(parts[0]);
+        var dateTime = TimeUtils.ToDateTime(parts[0]);
         return new TimeLog(step, dateTime);
     }
 }

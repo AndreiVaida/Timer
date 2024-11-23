@@ -7,26 +7,33 @@ using Moq;
 using Timer.model;
 using Timer.Model;
 using Timer.Repository;
-using Timer.Utils;
+using Timer.Service;
 
-namespace Timer.service.Tests;
+namespace TimerTests.Service;
 
 [TestClass]
 public class TimeServiceImplTests : ReactiveTest {
-        
+    private Mock<DateTimeProvider> _dateTimeProviderMock;
+    private Mock<ActivityRepository> _timeRepositoryMock;
+    private ActivityServiceImpl _timeService;
+
+    [TestInitialize]
+    public void SetUp() {
+        _dateTimeProviderMock = new Mock<DateTimeProvider>();
+        _timeRepositoryMock = new Mock<ActivityRepository>();
+        _timeService = new ActivityServiceImpl(_timeRepositoryMock.Object, _dateTimeProviderMock.Object);
+    }
+
     [TestMethod]
     [DynamicData(nameof(SequentialStepsTestCases))]
     [DynamicData(nameof(ParallelStepsTestCases))]
     [DynamicData(nameof(SequentialAndParallelStepsTestCases))]
     public void GivenExistingSequentialSteps_WhenCreateActivity_ThenCorrectDurationIsCalculatedForEachStep(List<TimeLog> timeLogs, List<TimeEvent> expectedTimeEvents, DateTime now) {
-        var timeRepositoryMock = new Mock<TimeRepository>();
-        timeRepositoryMock.Setup(repo => repo.GetTimeLogs(null)).Returns(timeLogs);
-        var timeUtilsMock = new Mock<TimeUtils>();
-        timeUtilsMock.Setup(util => util.CurrentDateTime()).Returns(now);
-        var timeService = new TimeServiceImpl(timeRepositoryMock.Object, timeUtilsMock.Object);
-        var observer = CreateTestObserver(timeService.TimeUpdates);
+        _dateTimeProviderMock.Setup(provider => provider.GetNow()).Returns(now);
+        _timeRepositoryMock.Setup(repo => repo.GetTimeLogs(null)).Returns(timeLogs);
+        var observer = CreateTestObserver(_timeService.TimeUpdates);
 
-        timeService.CreateActivity("");
+        _timeService.CreateActivity("");
 
         Assert.AreEqual(expectedTimeEvents.Count, observer.Messages.Count);
         for (var i = 0; i < observer.Messages.Count; i++) {
@@ -49,15 +56,15 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.PAUSE,             new DateTime(2023, 01, 28, 12, 18, 03))
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.FromMinutes(10), false),
-                new(Step.OTHER,                     TimeSpan.FromMinutes(50), false),
-                new(Step.INVESTIGATE,               TimeSpan.FromSeconds(1), false),
-                new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(59), false),
-                new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.Zero, false),
-                new(Step.RESOLVE_COMMENTS,          TimeSpan.FromMinutes(59), false),
-                new(Step.DO_REVIEW,                 TimeSpan.FromSeconds(3), false),
-                new(Step.LOADING__START,            TimeSpan.Zero, false),
-                new(Step.TOTAL,                     TimeSpan.FromHours(2).Add(TimeSpan.FromSeconds(3)), false)
+                new("", Step.MEETING,                   TimeSpan.FromMinutes(10), false),
+                new("", Step.OTHER,                     TimeSpan.FromMinutes(50), false),
+                new("", Step.INVESTIGATE,               TimeSpan.FromSeconds(1), false),
+                new("", Step.IMPLEMENT,                 TimeSpan.FromSeconds(59), false),
+                new("", Step.WAIT_FOR_REVIEW__START,    TimeSpan.Zero, false),
+                new("", Step.RESOLVE_COMMENTS,          TimeSpan.FromMinutes(59), false),
+                new("", Step.DO_REVIEW,                 TimeSpan.FromSeconds(3), false),
+                new("", Step.LOADING__START,            TimeSpan.Zero, false),
+                new("", Step.TOTAL,                     TimeSpan.FromHours(2).Add(TimeSpan.FromSeconds(3)), false)
             },
             null
         },
@@ -74,15 +81,15 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.PAUSE,             new DateTime(2023, 01, 28, 12, 18, 03))
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.Zero, false),
-                new(Step.OTHER,                     TimeSpan.Zero, false),
-                new(Step.INVESTIGATE,               TimeSpan.FromSeconds(2).Add(TimeSpan.FromMinutes(59)), false),
-                new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(28).Add(TimeSpan.FromSeconds(3)), false),
-                new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.Zero, false),
-                new(Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
-                new(Step.DO_REVIEW,                 TimeSpan.Zero, false),
-                new(Step.LOADING__START,            TimeSpan.Zero, false),
-                new(Step.TOTAL,                     TimeSpan.FromMinutes(59).Add(TimeSpan.FromSeconds(33)), false)
+                new("", Step.MEETING,                   TimeSpan.Zero, false),
+                new("", Step.OTHER,                     TimeSpan.Zero, false),
+                new("", Step.INVESTIGATE,               TimeSpan.FromSeconds(2).Add(TimeSpan.FromMinutes(59)), false),
+                new("", Step.IMPLEMENT,                 TimeSpan.FromSeconds(28).Add(TimeSpan.FromSeconds(3)), false),
+                new("", Step.WAIT_FOR_REVIEW__START,    TimeSpan.Zero, false),
+                new("", Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
+                new("", Step.DO_REVIEW,                 TimeSpan.Zero, false),
+                new("", Step.LOADING__START,            TimeSpan.Zero, false),
+                new("", Step.TOTAL,                     TimeSpan.FromMinutes(59).Add(TimeSpan.FromSeconds(33)), false)
             },
             null
         }
@@ -98,15 +105,15 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.LOADING__END,              new DateTime(2023, 01, 28, 12, 18, 00))
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.Zero, false),
-                new(Step.OTHER,                     TimeSpan.Zero, false),
-                new(Step.INVESTIGATE,               TimeSpan.Zero, false),
-                new(Step.IMPLEMENT,                 TimeSpan.Zero, false),
-                new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1), false),
-                new(Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
-                new(Step.DO_REVIEW,                 TimeSpan.Zero, false),
-                new(Step.LOADING__START,            TimeSpan.FromMinutes(59), false),
-                new(Step.TOTAL,                     TimeSpan.FromSeconds(1).Add(TimeSpan.FromMinutes(59)), false)
+                new("", Step.MEETING,                   TimeSpan.Zero, false),
+                new("", Step.OTHER,                     TimeSpan.Zero, false),
+                new("", Step.INVESTIGATE,               TimeSpan.Zero, false),
+                new("", Step.IMPLEMENT,                 TimeSpan.Zero, false),
+                new("", Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1), false),
+                new("", Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
+                new("", Step.DO_REVIEW,                 TimeSpan.Zero, false),
+                new("", Step.LOADING__START,            TimeSpan.FromMinutes(59), false),
+                new("", Step.TOTAL,                     TimeSpan.FromSeconds(1).Add(TimeSpan.FromMinutes(59)), false)
             },
             null
         },
@@ -122,15 +129,15 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.PAUSE,                     new DateTime(2023, 01, 28, 12, 18, 05))
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.Zero, false),
-                new(Step.OTHER,                     TimeSpan.Zero, false),
-                new(Step.INVESTIGATE,               TimeSpan.Zero, false),
-                new(Step.IMPLEMENT,                 TimeSpan.Zero, false),
-                new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1).Add(TimeSpan.FromHours(1)), false),
-                new(Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
-                new(Step.DO_REVIEW,                 TimeSpan.Zero, false),
-                new(Step.LOADING__START,            TimeSpan.FromMinutes(59).Add(TimeSpan.FromSeconds(5)), false),
-                new(Step.TOTAL,                     TimeSpan.FromSeconds(4).Add(TimeSpan.FromHours(1)), false)
+                new("", Step.MEETING,                   TimeSpan.Zero, false),
+                new("", Step.OTHER,                     TimeSpan.Zero, false),
+                new("", Step.INVESTIGATE,               TimeSpan.Zero, false),
+                new("", Step.IMPLEMENT,                 TimeSpan.Zero, false),
+                new("", Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1).Add(TimeSpan.FromHours(1)), false),
+                new("", Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
+                new("", Step.DO_REVIEW,                 TimeSpan.Zero, false),
+                new("", Step.LOADING__START,            TimeSpan.FromMinutes(59).Add(TimeSpan.FromSeconds(5)), false),
+                new("", Step.TOTAL,                     TimeSpan.FromSeconds(4).Add(TimeSpan.FromHours(1)), false)
             },
             null
         }
@@ -154,15 +161,15 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.PAUSE,                     new DateTime(2023, 01, 28, 13, 25, 05)),
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.Zero, false),
-                new(Step.OTHER,                     TimeSpan.Zero, false),
-                new(Step.INVESTIGATE,               TimeSpan.FromMinutes(65), false),
-                new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
-                new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromMinutes(124).Add(TimeSpan.FromSeconds(3)), false),
-                new(Step.RESOLVE_COMMENTS,          TimeSpan.FromSeconds(5), false),
-                new(Step.DO_REVIEW,                 TimeSpan.FromSeconds(58).Add(TimeSpan.FromSeconds(57)), false),
-                new(Step.LOADING__START,            TimeSpan.FromMinutes(59).Add(TimeSpan.FromSeconds(184)), false),
-                new(Step.TOTAL,                     TimeSpan.FromHours(2).Add(TimeSpan.FromMinutes(7).Add(TimeSpan.FromSeconds(5))), false)
+                new("", Step.MEETING,                   TimeSpan.Zero, false),
+                new("", Step.OTHER,                     TimeSpan.Zero, false),
+                new("", Step.INVESTIGATE,               TimeSpan.FromMinutes(65), false),
+                new("", Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
+                new("", Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromMinutes(124).Add(TimeSpan.FromSeconds(3)), false),
+                new("", Step.RESOLVE_COMMENTS,          TimeSpan.FromSeconds(5), false),
+                new("", Step.DO_REVIEW,                 TimeSpan.FromSeconds(58).Add(TimeSpan.FromSeconds(57)), false),
+                new("", Step.LOADING__START,            TimeSpan.FromMinutes(59).Add(TimeSpan.FromSeconds(184)), false),
+                new("", Step.TOTAL,                     TimeSpan.FromHours(2).Add(TimeSpan.FromMinutes(7).Add(TimeSpan.FromSeconds(5))), false)
             },
             null
         },
@@ -186,17 +193,17 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.PAUSE,                     new DateTime(2023, 01, 28, 13, 25, 05)),
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.Zero, false),
-                new(Step.OTHER,                     TimeSpan.Zero, false),
-                new(Step.INVESTIGATE,               TimeSpan.FromMinutes(65), false),
-                new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
-                new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1)
+                new("", Step.MEETING,                   TimeSpan.Zero, false),
+                new("", Step.OTHER,                     TimeSpan.Zero, false),
+                new("", Step.INVESTIGATE,               TimeSpan.FromMinutes(65), false),
+                new("", Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
+                new("", Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromSeconds(1)
                                                                     .Add(TimeSpan.FromMinutes(1).Add(TimeSpan.FromSeconds(3))), false),
-                new(Step.RESOLVE_COMMENTS,          TimeSpan.FromSeconds(5), false),
-                new(Step.DO_REVIEW,                 TimeSpan.FromSeconds(51)
+                new("", Step.RESOLVE_COMMENTS,          TimeSpan.FromSeconds(5), false),
+                new("", Step.DO_REVIEW,                 TimeSpan.FromSeconds(51)
                                                                     .Add(TimeSpan.FromSeconds(57)), false),
-                new(Step.LOADING__START,            TimeSpan.FromSeconds(9).Add(TimeSpan.FromMinutes(3)), false),
-                new(Step.TOTAL,                     TimeSpan.FromSeconds(2)
+                new("", Step.LOADING__START,            TimeSpan.FromSeconds(9).Add(TimeSpan.FromMinutes(3)), false),
+                new("", Step.TOTAL,                     TimeSpan.FromSeconds(2)
                                                                     .Add(TimeSpan.FromMinutes(1).Add(TimeSpan.FromSeconds(4)))
                                                                     .Add(TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(7).Add(TimeSpan.FromSeconds(2)))), false)
             },
@@ -214,16 +221,16 @@ public class TimeServiceImplTests : ReactiveTest {
                 new(Step.INVESTIGATE,               new DateTime(2023, 01, 28, 12, 20, 00)),
             },
             new List<TimeEvent> {
-                new(Step.MEETING,                   TimeSpan.Zero, false),
-                new(Step.OTHER,                     TimeSpan.Zero, false),
-                new(Step.INVESTIGATE,               TimeSpan.FromMinutes(10), true),
-                new(Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
-                new(Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(11).Add(TimeSpan.FromSeconds(59))), true),
-                new(Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
-                new(Step.DO_REVIEW,                 TimeSpan.FromSeconds(51)
+                new("", Step.MEETING,                   TimeSpan.Zero, false),
+                new("", Step.OTHER,                     TimeSpan.Zero, false),
+                new("", Step.INVESTIGATE,               TimeSpan.FromMinutes(10), true),
+                new("", Step.IMPLEMENT,                 TimeSpan.FromSeconds(1), false),
+                new("", Step.WAIT_FOR_REVIEW__START,    TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(11).Add(TimeSpan.FromSeconds(59))), true),
+                new("", Step.RESOLVE_COMMENTS,          TimeSpan.Zero, false),
+                new("", Step.DO_REVIEW,                 TimeSpan.FromSeconds(51)
                                                                     .Add(TimeSpan.FromSeconds(117)), false),
-                new(Step.LOADING__START,            TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(11)), true),
-                new(Step.TOTAL,                     TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(12)), true)
+                new("", Step.LOADING__START,            TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(11)), true),
+                new("", Step.TOTAL,                     TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(12)), true)
             },
             new DateTime(2023, 1, 28, 12, 30, 0)
         }

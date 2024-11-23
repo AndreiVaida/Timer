@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="Timer.ui.ActivityStepsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Timer.ui"
+             mc:Ignorable="d">
+    <DockPanel>
+        <Grid Height="120" Margin="10 0 10 0">
+            <Grid Height="60" VerticalAlignment="Top">
+                <Button x:Name="ButtonMeeting" Content="👨‍👩‍👧‍👦 Ceremonie" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
+                <Label Name="LabelMeetingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+            </Grid>
+            <Grid Height="60" VerticalAlignment="Bottom">
+                <Button x:Name="ButtonOther" Content="👨‍🎓 Altele" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
+                <Label Name="LabelOtherTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+            </Grid>
+        </Grid>
+        <Grid Height="120" Margin="10 0 10 0">
+            <Grid Height="60" VerticalAlignment="Top" Margin="10 0 10 0">
+                <Button x:Name="ButtonInvestigate" Content="🤔 Investighez" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />
+                <Label Name="LabelInvestigateTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
+            </Grid>
+            <Grid Height="60" VerticalAlignment="Bottom" Margin="10 0 10 0">
+                <Button x:Name="ButtonImplement" Content="✏ Implementez" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />
+                <Label Name="LabelImplementTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
+            </Grid>
+        </Grid>
+        <Grid Height="120" Margin="10 0 10 0">
+            <Grid Height="60" VerticalAlignment="Top" Margin="10 0 10 0">
+                <Button x:Name="ButtonLoading" Content="⏳ Aștept procesare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnStepButtonClick" />
+                <Label Name="LabelLoadingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
+            </Grid>
+            <Grid Height="60" VerticalAlignment="Bottom" Margin="10 0 10 0">
+                <Button x:Name="ButtonWaitForReview" Content="⏳ Aștept Review" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnStepButtonClick" />
+                <Label Name="LabelWaitForReviewTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
+            </Grid>
+        </Grid>
+        <Grid Height="120" Margin="10 0 10 0">
+            <Grid Height="60" VerticalAlignment="Top" Margin="10 0 10 0">
+                <Button x:Name="ButtonResolveComments" Content="✏ Rezolv comentarii" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />
+                <Label Name="LabelResolveCommentsTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
+            </Grid>
+            <Grid Height="60" VerticalAlignment="Bottom" Margin="10 0 10 0">
+                <Button x:Name="ButtonDoReview" Content="✏ Fac Review" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#a0ff69" Click="OnStepButtonClick" />
+                <Label Name="LabelDoReviewTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#a0ff69">00:00:00</Label>
+            </Grid>
+        </Grid>
+        <StackPanel VerticalAlignment="Center" MinWidth="80">
+            <Label HorizontalAlignment="Center" Margin="0, 0, 0 ,0">Total</Label>
+            <Label Name="LabelActivityName" HorizontalAlignment="Center" Margin="0, -7, 0, 0">Activitate</Label>
+            <Label Name="LabelTotalTime" HorizontalAlignment="Center">00:00:00</Label>
+        </StackPanel>
+        <Grid Margin="10 0 10 0">
+            <Button x:Name="ButtonPause" Content="⏸️ Pauză" HorizontalAlignment="Center" VerticalAlignment="Center" Height="120" Width="120" Background="#1D32E0" Foreground="White" Click="OnStepButtonClick" />
+        </Grid>
+    </DockPanel>
+</UserControl>

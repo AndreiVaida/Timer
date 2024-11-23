@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ninject" Version="3.3.6" />
     <PackageReference Include="System.Reactive.Linq" Version="6.0.1" />
   </ItemGroup>
 

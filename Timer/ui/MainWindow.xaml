@@ -1,0 +1,19 @@
+﻿<Window x:Class="Timer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Timer" xmlns:Controls="clr-namespace:Timer.ui"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="610" Width="1270" Background="#FF09364C">
+    <Grid>
+        <Grid HorizontalAlignment="Center" Height="75" Margin="0,10,0,0" VerticalAlignment="Top" Width="372">
+            <Label Content="Timer" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Agent Orange" FontSize="26"/>
+            <Label Content="Log working time" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14" FontFamily="Segoe UI Light" Margin="0,40,0,0"/>
+        </Grid>
+
+        <Controls:ActivitySelectorControl Margin="10, 20, 0 ,0" />
+        <Controls:ActivityStepsControl Margin="305,85,10,0" Height="165" VerticalAlignment="Top" />
+        <Controls:WeekSummaryControl Margin="0,255,0,0" />
+    </Grid>
+</Window>

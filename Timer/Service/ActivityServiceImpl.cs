@@ -6,66 +6,50 @@ using System.Reactive.Subjects;
 using Timer.model;
 using Timer.Model;
 using Timer.Repository;
-using Timer.Service;
 using Timer.Utils;
 
-namespace Timer.service;
+namespace Timer.Service;
 
-public class TimeServiceImpl : TimeService  {
+public class ActivityServiceImpl(ActivityRepository timeRepository, DateTimeProvider timeProvider) : ActivityService  {
     private const int IntervalSeconds = 1;
-    private readonly TimeRepository _timeRepository;
-    private readonly Subject<TimeEvent> _timeSubject = new();
+    private readonly ReplaySubject<TimeEvent> _timeSubject = new(10);
     private IDisposable? _timeUpdatesDisposable;
     private IDictionary<Step, TimeSpan> _stepsDuration;
     private IList<TimeLog>? _timeLogs;
     private readonly HashSet<Step> _activeSteps = new();
-    private readonly TimeUtils _timeUtils;
+    private string? _activeActivityName;
     public IObservable<TimeEvent> TimeUpdates => _timeSubject.AsObservable();
 
-    public TimeServiceImpl(TimeRepository timeRepository, TimeUtils timeUtils) {
-        _timeRepository = timeRepository;
-        _timeUtils = timeUtils;
-    }
-
-    public TimeLog? CreateActivity(string activityName) {
+    public void CreateActivity(string activityName) {
         _timeUpdatesDisposable?.Dispose();
         _activeSteps.Clear();
 
-        _timeRepository.CreateActivity(activityName);
+        timeRepository.CreateActivity(activityName);
+        _activeActivityName = activityName;
         CalculateLoggedStepsDurationAndTotal();
         UpdateActiveStepsAfterActivityLoaded();
         NotifyLoggedStepsDuration();
         StartTimerLiveUpdate();
-        return _timeLogs!.LastOrDefault();
     }
 
     public void StartStep(Step step) {
         if (_timeLogs == null) return;
 
-        var now = _timeUtils.CurrentDateTime();
+        var now = TimeUtils.CurrentDateTime(timeProvider);
         _timeLogs.Add(new TimeLog(step, now));
-        _timeRepository.AddStep(now, step);
+        timeRepository.AddStep(now, step);
 
         UpdateActiveSteps(step);
     }
 
-    public (string?, TimeLog?) LoadLatestActivity() {
-        var activityName = _timeRepository.GetLastActivityName();
-        if (activityName == null)
-            return (null, null);
-
-        CreateActivity(activityName);
-        return (activityName, _timeLogs!.LastOrDefault());
-    }
-
-    public List<string> GetLatestActivities(int numberOfActivities) => _timeRepository.GetLastActivities(numberOfActivities);
+    public List<string> GetLatestActivities(int numberOfActivities) => timeRepository.GetLastActivities(numberOfActivities);
 
     public IDictionary<DateOnly, List<Activity>> GetWeekSummary(DateOnly dayInWeek, bool includeWeekends = false)
     {
-        var firstDayOfWeek = _timeUtils.GetFirstDayOfWeek(dayInWeek);
+        var firstDayOfWeek = TimeUtils.GetFirstDayOfWeek(dayInWeek);
         var lastDayOfWeek = firstDayOfWeek.AddDays(includeWeekends ? 6 : 4);
-        var allTimeLogs = _timeRepository.GetLastActivities(10)
-            .Select(activityName => Tuple.Create(activityName, _timeRepository.GetTimeLogs(activityName)))
+        var allTimeLogs = timeRepository.GetLastActivities(10)
+            .Select(activityName => Tuple.Create(activityName, timeRepository.GetTimeLogs(activityName)))
             .ToList();
 
         var weekSummary = new Dictionary<DateOnly, List<Activity>>();
@@ -87,7 +71,7 @@ public class TimeServiceImpl : TimeService  {
             var allTimeLogs = timeLogsOfActivity.Item2;
             var timeLogsOfDay = allTimeLogs.Where(timeLog => HasWork(day, timeLog)).ToList();
             var workedTime = CalculateLoggedTotalStepsDuration(timeLogsOfDay);
-            return new Activity {Name = name, Duration = workedTime};
+            return new Activity(name) { Duration = workedTime};
         }).ToList();
     }
 
@@ -95,7 +79,7 @@ public class TimeServiceImpl : TimeService  {
     private static bool HasWork(DateOnly day, TimeLog timeLog) => DateOnly.FromDateTime(timeLog.DateTime).Equals(day);
 
     private void CalculateLoggedStepsDurationAndTotal() {
-        _timeLogs = _timeRepository.GetTimeLogs();
+        _timeLogs = timeRepository.GetTimeLogs();
         InitializeStepsDuration();
 
         if (_timeLogs.Count < 2) return;
@@ -157,7 +141,7 @@ public class TimeServiceImpl : TimeService  {
 
         if (sessionStartLogs.Count > 0) {
             var sessionStartLog = sessionStartLogs.First();
-            var nowLog = new TimeLog(sessionStartLog.Step, _timeUtils.CurrentDateTime());
+            var nowLog = new TimeLog(sessionStartLog.Step, TimeUtils.CurrentDateTime(timeProvider));
             var sessionDuration = ComputeStepDuration(sessionStartLog, nowLog);
             totalDuration = totalDuration.Add(sessionDuration);
         }
@@ -196,7 +180,7 @@ public class TimeServiceImpl : TimeService  {
     private static TimeSpan ComputeStepDuration(TimeLog startLog, TimeLog endLog) => endLog.DateTime.Subtract(startLog.DateTime);
 
     private TimeSpan ComputeStepDuration(TimeLog timeLog, int indexOfTimeLog) {
-        var endOfCurrentLog = GetEndOfCurrentLog(timeLog, indexOfTimeLog) ?? new TimeLog(timeLog.Step, _timeUtils.CurrentDateTime());
+        var endOfCurrentLog = GetEndOfCurrentLog(timeLog, indexOfTimeLog) ?? new TimeLog(timeLog.Step, TimeUtils.CurrentDateTime(timeProvider));
         return ComputeStepDuration(timeLog, endOfCurrentLog);
     }
 
@@ -232,13 +216,13 @@ public class TimeServiceImpl : TimeService  {
     private void NotifyLoggedStepsDuration() {
         foreach (var (step, duration) in _stepsDuration) {
             var isActive = step == Step.TOTAL ? _activeSteps.Any() : _activeSteps.Contains(step);
-            _timeSubject.OnNext(new TimeEvent(step, duration, isActive));
+            _timeSubject.OnNext(new TimeEvent(_activeActivityName!, step, duration, isActive));
         }
     }
 
     private void NotifyStepDuration(Step step, TimeSpan duration) {
-        _timeSubject.OnNext(new TimeEvent(step, duration, _activeSteps.Contains(step)));
-        _timeSubject.OnNext(new TimeEvent(Step.TOTAL, duration, _activeSteps.Any()));
+        _timeSubject.OnNext(new TimeEvent(_activeActivityName!, step, duration, _activeSteps.Contains(step)));
+        _timeSubject.OnNext(new TimeEvent(_activeActivityName!, Step.TOTAL, duration, _activeSteps.Any()));
     }
 
     private void StartTimerLiveUpdate() {
