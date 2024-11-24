@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Timer.model;
 using Timer.Model;
 using Timer.service;
@@ -15,29 +17,33 @@ namespace Timer {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private readonly TimeService _timeService;
+        private readonly ActivityService _timeService;
         private readonly IScheduler _uiScheduler;
         private IList<Button> _buttonList;
+        public ObservableCollection<string> RecentActivities { get; set; } = new();
 
         public MainWindow() {
             InitializeComponent();
+            DataContext = this;
             InitializeButtonList();
             _timeService = new();
             _uiScheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
             SubscribeToTimeEvents();
+            LoadLatestActivities();
             LoadLatestActivity();
         }
 
-        private bool IsActivityNameValid() => InputActivityName.Text.Trim().Length > 0;
+        private bool IsActivityNameValid() => InputActivityNameCombobox.Text.Trim().Length > 0;
 
-        private void OnCreateActivityClick(object sender, RoutedEventArgs e) {
+        public void OnCreateActivityClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
-            var timeLog = _timeService.CreateActivity(InputActivityName.Text);
+            var timeLog = _timeService.CreateActivity(InputActivityNameCombobox.Text);
 
             UpdateWindow(timeLog);
+            LoadLatestActivities();
         }
 
-        private void OnStepButtonClick(object sender, RoutedEventArgs e) {
+        public void OnStepButtonClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
             var button = (Button)sender;
 
@@ -60,7 +66,7 @@ namespace Timer {
                 OnStepButtonClick(button, Step.EXPORT);
         }
 
-        private void OnStepButtonClick(Button button, Step step) {
+        public void OnStepButtonClick(Button button, Step step) {
             _timeService.StartStep(step);
             MakeSingleButtonPressed(button);
         }
@@ -99,12 +105,36 @@ namespace Timer {
                 });
         }
 
+        public void OnActivitySelected(object sender, SelectionChangedEventArgs e) {
+            if (!InputActivityNameCombobox.IsDropDownOpen || InputActivityNameCombobox.SelectedItem == null) return;
+            OnActivitySelected();
+        }
+
+        private void OnActivitySelected(object sender, KeyEventArgs e) {
+            if (e.Key != Key.Up && e.Key != Key.Down || InputActivityNameCombobox.SelectedItem == null) return;
+            OnActivitySelected();
+        }
+
+        private void OnActivitySelected() {
+            var selectedText = InputActivityNameCombobox.SelectedItem.ToString()!;
+            var timeLog = _timeService.CreateActivity(selectedText);
+            UpdateWindow(timeLog);
+        }
+
         private void LoadLatestActivity() {
             var (activityName, timeLog) = _timeService.LoadLatestActivity();
             if (activityName == null) return;
 
-            InputActivityName.Text = activityName;
+            InputActivityNameCombobox.Text = activityName;
             UpdateWindow(timeLog);
+        }
+
+        private void LoadLatestActivities() {
+            var activities = _timeService.GetLatestActivities(20);
+            RecentActivities.Clear();
+            foreach (var activity in activities) {
+                RecentActivities.Add(activity);
+            }
         }
 
         private Button? GetButtonForStep(Step? step) =>
@@ -127,5 +157,8 @@ namespace Timer {
         private void UpdateStartActivityTime(DateTime? dateTime) {
             LabelStartActivityTime.Content = dateTime == null ? string.Empty : TimeUtils.FormatDateTime((DateTime)dateTime);
         }
+
+        private void InputActivityNameCombobox_DropDownOpened(object sender, EventArgs e) => InputActivityNameCombobox.IsEditable = false;
+        private void InputActivityNameCombobox_DropDownClosed(object sender, EventArgs e) => InputActivityNameCombobox.IsEditable = true;
     }
 }

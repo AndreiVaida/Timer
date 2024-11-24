@@ -9,19 +9,19 @@ using Timer.Repository;
 using Timer.Utils;
 
 namespace Timer.service {
-    public class TimeService {
-        private readonly TimeRepository _timeRepository;
+    public class ActivityService {
+        private readonly ActivityRepository _activityRepository;
         private readonly Subject<TimeEvent> _timeSubject = new();
         private IDictionary<Step, TimeSpan> _stepsDuration;
         private IList<TimeLog> _timeLogs;
         public IObservable<TimeEvent> TimeUpdates => _timeSubject.AsObservable();
 
-        public TimeService() {
-            _timeRepository = new();
+        public ActivityService() {
+            _activityRepository = new();
         }
 
         public TimeLog? CreateActivity(string activityName) {
-            _timeRepository.CreateActivity(activityName);
+            _activityRepository.CreateActivity(activityName);
             CalculateLoggedStepsDuration();
             NotifyLoggedStepsDuration();
             StartTimer();
@@ -34,11 +34,11 @@ namespace Timer.service {
             var now = TimeUtils.CurrentDateTime();
             UpdateLastStepDuration();
             _timeLogs.Add(new TimeLog(step, now));
-            _timeRepository.AddStep(now, step);
+            _activityRepository.AddStep(now, step);
         }
 
         public (string?, TimeLog?) LoadLatestActivity() {
-            var activityName = TimeRepository.GetLastActivityName();
+            var activityName = _activityRepository.GetLastActivityName();
             if (activityName == null)
                 return (null, null);
 
@@ -46,8 +46,10 @@ namespace Timer.service {
             return (activityName, _timeLogs.LastOrDefault());
         }
 
+        public List<string> GetLatestActivities(int numberOfActivities) => _activityRepository.GetLastActivities(numberOfActivities);
+
         private void CalculateLoggedStepsDuration() {
-            _timeLogs = _timeRepository.GetTimeLogs();
+            _timeLogs = _activityRepository.GetTimeLogs();
             InitializeStepsDuration();
 
             if (_timeLogs.Count == 0) return;

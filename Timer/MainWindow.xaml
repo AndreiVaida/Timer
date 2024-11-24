@@ -13,7 +13,7 @@
         </Grid>
         <Grid Height="43" Margin="0,101,0,0" VerticalAlignment="Top">
             <Label Content="Activitate:" Width="100" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <TextBox x:Name="InputActivityName" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,0,130,0" />
+            <ComboBox x:Name="InputActivityNameCombobox" ItemsSource="{Binding RecentActivities}" IsEditable="true" SelectionChanged="OnActivitySelected" KeyUp="OnActivitySelected" DropDownOpened="InputActivityNameCombobox_DropDownOpened" DropDownClosed="InputActivityNameCombobox_DropDownClosed" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,0,130,0" />
             <Label Content=".csv" Width="50" Margin="726,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
             <Button Margin="812,8,10,5" Click="OnCreateActivityClick">Creează</Button>
         </Grid>

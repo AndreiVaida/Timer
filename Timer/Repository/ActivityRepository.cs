@@ -7,13 +7,13 @@ using Timer.Model;
 using Timer.Utils;
 
 namespace Timer.Repository {
-    public class TimeRepository {
+    public class ActivityRepository {
         private const string DataFolderPath = "Activities";
         private const string CsvHeader = "Date & Time,Step";
         private const string CsvSeparator = ",";
         private string _filePath;
 
-        public TimeRepository() {
+        public ActivityRepository() {
             CreateDataFolderIfNotExists();
         }
 
@@ -46,15 +46,18 @@ namespace Timer.Repository {
                 .Select(MapLineToTimeLog)
                 .ToList();
 
-        public static string? GetLastActivityName() =>
+        public string? GetLastActivityName() => GetLastActivities(1).FirstOrDefault();
+
+        public List<string> GetLastActivities(int numberOfActivities) =>
             new DirectoryInfo(DataFolderPath).GetFiles()
-            .OrderByDescending(file => file.LastWriteTime)
-            .Take(1)
-            .Select(file => Path.GetFileNameWithoutExtension(file.Name))
-            .FirstOrDefault();
+                .Where(IsTimerFile)
+                .OrderByDescending(file => file.LastWriteTime)
+                .Take(numberOfActivities)
+                .Select(file => Path.GetFileNameWithoutExtension(file.Name))
+                .ToList();
 
+        private static bool IsTimerFile(FileInfo file) => file.Extension == ".csv";
         private static bool IsEmptyFile(string filePath) => !File.Exists(filePath) || new FileInfo(filePath).Length == 0;
-
         private bool IsValidTimeEventLine(string line) => line.Trim().Length > 0 && line.Split(CsvSeparator).Length == 2 && line != CsvHeader;
 
         private TimeLog MapLineToTimeLog(string line) {
