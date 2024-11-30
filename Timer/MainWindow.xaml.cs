@@ -17,7 +17,7 @@ namespace Timer {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private readonly ActivityService _timeService;
+        private readonly ActivityService _activityService;
         private readonly IScheduler _uiScheduler;
         private IList<Button> _buttonList;
         public ObservableCollection<string> RecentActivities { get; set; } = new();
@@ -26,7 +26,7 @@ namespace Timer {
             InitializeComponent();
             DataContext = this;
             InitializeButtonList();
-            _timeService = new();
+            _activityService = new();
             _uiScheduler = new SynchronizationContextScheduler(SynchronizationContext.Current!);
             SubscribeToTimeEvents();
             LoadLatestActivities();
@@ -37,7 +37,7 @@ namespace Timer {
 
         public void OnCreateActivityClick(object sender, RoutedEventArgs e) {
             if (!IsActivityNameValid()) return;
-            var timeLog = _timeService.CreateActivity(InputActivityNameCombobox.Text);
+            var timeLog = _activityService.CreateActivity(InputActivityNameCombobox.Text);
 
             UpdateWindow(timeLog);
             LoadLatestActivities();
@@ -67,9 +67,12 @@ namespace Timer {
         }
 
         public void OnStepButtonClick(Button button, Step step) {
-            _timeService.StartStep(step);
+            _activityService.StartStep(step);
             MakeSingleButtonPressed(button);
         }
+
+        public void OnOpenFile(object sender, RoutedEventArgs e) => _activityService.OpenActivityFile(InputActivityNameCombobox.Text);
+        public void OnOpenFileLocation(object sender, RoutedEventArgs e) => _activityService.OpenActivityFile();
 
         private void InitializeButtonList() {
             _buttonList = new List<Button> {
@@ -91,7 +94,7 @@ namespace Timer {
         }
 
         private void SubscribeToTimeEvents() {
-            _timeService.TimeUpdates
+            _activityService.TimeUpdates
                 .ObserveOn(_uiScheduler)
                 .Subscribe(timeEvent => {
                     switch(timeEvent.Step) {
@@ -117,12 +120,12 @@ namespace Timer {
 
         private void OnActivitySelected() {
             var selectedText = InputActivityNameCombobox.SelectedItem.ToString()!;
-            var timeLog = _timeService.CreateActivity(selectedText);
+            var timeLog = _activityService.CreateActivity(selectedText);
             UpdateWindow(timeLog);
         }
 
         private void LoadLatestActivity() {
-            var (activityName, timeLog) = _timeService.LoadLatestActivity();
+            var (activityName, timeLog) = _activityService.LoadLatestActivity();
             if (activityName == null) return;
 
             InputActivityNameCombobox.Text = activityName;
@@ -130,7 +133,7 @@ namespace Timer {
         }
 
         private void LoadLatestActivities() {
-            var activities = _timeService.GetLatestActivities(20);
+            var activities = _activityService.GetLatestActivities(20);
             RecentActivities.Clear();
             foreach (var activity in activities) {
                 RecentActivities.Add(activity);

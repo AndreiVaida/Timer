@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Timer.model;
@@ -18,7 +19,7 @@ namespace Timer.Repository {
         }
 
         public void CreateActivity(string activityName) {
-            _filePath = $"{DataFolderPath}{Path.DirectorySeparatorChar}{activityName}.csv";
+            _filePath = GetFilePath(activityName);
 
             if (IsEmptyFile(_filePath)) {
                 using var streamWriter = new StreamWriter(_filePath);
@@ -55,6 +56,13 @@ namespace Timer.Repository {
                 .Take(numberOfActivities)
                 .Select(file => Path.GetFileNameWithoutExtension(file.Name))
                 .ToList();
+
+        public void OpenActivityFile(string? activityName = null) {
+            var path = activityName == null ? DataFolderPath : GetFilePath(activityName);
+            Process.Start("explorer.exe", @$"{path}");
+        }
+
+        private static string GetFilePath(string activityName) => $"{DataFolderPath}{Path.DirectorySeparatorChar}{activityName}.csv";
 
         private static bool IsTimerFile(FileInfo file) => file.Extension == ".csv";
         private static bool IsEmptyFile(string filePath) => !File.Exists(filePath) || new FileInfo(filePath).Length == 0;

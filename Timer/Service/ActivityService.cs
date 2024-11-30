@@ -48,6 +48,8 @@ namespace Timer.service {
 
         public List<string> GetLatestActivities(int numberOfActivities) => _activityRepository.GetLastActivities(numberOfActivities);
 
+        public void OpenActivityFile(string? activityName = null) => _activityRepository.OpenActivityFile(activityName);
+
         private void CalculateLoggedStepsDuration() {
             _timeLogs = _activityRepository.GetTimeLogs();
             InitializeStepsDuration();
