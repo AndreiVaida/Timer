@@ -1,5 +1,6 @@
 ﻿using Ninject;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Timer.General;
@@ -30,6 +31,10 @@ namespace Timer.ui {
             var button = (Button)sender;
             StartActivity(button.Tag.ToString()!);
         }
+
+        public void OnOpenFile(object sender, RoutedEventArgs e) => _timeService.OpenActivityFile(InputActivityName.Text);
+
+        public void OnOpenFileLocation(object sender, RoutedEventArgs e) => _timeService.OpenActivityFile();
 
         private void LoadLatestActivities() {
             ActivitiesListBox.Items.Clear();

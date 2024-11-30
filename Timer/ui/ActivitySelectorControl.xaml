@@ -7,7 +7,13 @@
              mc:Ignorable="d">
     <StackPanel Orientation="Vertical">
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
-            <Label Content="Activitate →" HorizontalContentAlignment="Right" Width="95"/>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <Label Content="Activitate →" HorizontalContentAlignment="Right" Width="95"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Click="OnOpenFile" Margin="2, 0" Width="20" Height="20" Padding="-10">📄</Button>
+                    <Button Click="OnOpenFileLocation" Margin="2, 0" Width="20" Height="20" Padding="-10">📂</Button>
+                </StackPanel>
+            </StackPanel>
             <TextBox x:Name="InputActivityName" VerticalAlignment="Center" VerticalContentAlignment="Center" Width="200" />
             <Button Click="OnCreateActivityClick" Margin="2, 0">Creează!</Button>
         </StackPanel>

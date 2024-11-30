@@ -62,6 +62,8 @@ public class ActivityServiceImpl(ActivityRepository timeRepository, DateTimeProv
         return weekSummary;
     }
 
+    public void OpenActivityFile(string? activityName = null) => timeRepository.OpenActivityFile(activityName);
+
     private List<Activity> GetActivitiesOfDay(DateOnly day, IList<Tuple<string, IList<TimeLog>>> allActivities)
     {
         var activitiesOfDay = allActivities.Where(timeLogsOfDay => HasWork(day, timeLogsOfDay.Item2)).ToList();

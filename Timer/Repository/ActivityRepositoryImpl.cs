@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Timer.model;
@@ -61,6 +62,11 @@ public class ActivityRepositoryImpl : ActivityRepository {
             .Take(numberOfActivities)
             .Select(file => Path.GetFileNameWithoutExtension(file.Name))
             .ToList();
+
+    public void OpenActivityFile(string? activityName = null) {
+        var path = activityName == null ? DataFolderPath : GetFilePath(activityName);
+        Process.Start("explorer.exe", @$"{path}");
+    }
 
     private static bool IsTimerFile(FileInfo file) => file.Extension == ".csv";
 

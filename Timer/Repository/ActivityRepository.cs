@@ -11,4 +11,5 @@ public interface ActivityRepository {
     public IList<TimeLog> GetTimeLogs(string? activityName = null);
     public string? GetLastActivityName();
     List<string> GetLastActivities(int numberOfActivities);
+    void OpenActivityFile(string? activityName = null);
 }

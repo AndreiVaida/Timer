@@ -11,4 +11,5 @@ public interface ActivityService {
     public void StartStep(Step step);
     List<string> GetLatestActivities(int numberOfActivities);
     IDictionary<DateOnly, List<Activity>> GetWeekSummary(DateOnly dayInWeek, bool includeWeekends = false);
+    void OpenActivityFile(string? activityName = null);
 }
