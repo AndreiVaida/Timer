@@ -6,43 +6,57 @@
         xmlns:local="clr-namespace:Timer"
         mc:Ignorable="d"
         Title="MainWindow" Height="380" Width="900" Background="#FF09364C">
-    <Grid>
-        <Grid HorizontalAlignment="Center" Height="75" Margin="0,10,0,0" VerticalAlignment="Top" Width="372">
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+        <Grid HorizontalAlignment="Center" Height="75" VerticalAlignment="Top" Width="372">
             <Label Content="Timer" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Agent Orange" FontSize="26"/>
             <Label Content="Log working time" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14" FontFamily="Segoe UI Light" Margin="0,40,0,0"/>
         </Grid>
-        <Grid Height="43" Margin="0,101,0,0" VerticalAlignment="Top">
+        <Grid Height="43" VerticalAlignment="Top">
             <Label Content="Activitate:" Width="100" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
             <ComboBox x:Name="InputActivityNameCombobox" ItemsSource="{Binding RecentActivities}" IsEditable="true" SelectionChanged="OnActivitySelected" KeyUp="OnActivitySelected" DropDownOpened="InputActivityNameCombobox_DropDownOpened" DropDownClosed="InputActivityNameCombobox_DropDownClosed" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="81,0,130,0" />
             <Label Content=".csv" Width="50" Margin="726,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
             <Button Margin="812,8,10,5" Click="OnCreateActivityClick">Creează</Button>
         </Grid>
-        <DockPanel Height="100" Margin="10,150,10,0" VerticalAlignment="Top">
-            <Grid Height="60" Margin="10 0 10 0">
+        <DockPanel Height="80">
+            <Grid Height="60" Margin="10 0">
                 <Button x:Name="ButtonDownload" Content="📥 Descărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
                 <Label Name="LabelDownloadTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0 10 0">
+            <Grid Height="60" Margin="10 0">
                 <Button x:Name="ButtonLoad" Content="⏳ Încărcare program" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
                 <Label Name="LabelLoadingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0 10 0">
+            <Grid Height="60" Margin="10 0">
                 <Button x:Name="ButtonEdit" Content="🚀 Editare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />
                 <Label Name="LabelEditTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0 10 0">
+            <Grid Height="60" Margin="10 0">
                 <Button x:Name="ButtonFreezeReload" Content="⚡⏳ Blocat, reîncărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnStepButtonClick" />
                 <Label Name="LabelFreezeReloadTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0 10 0">
+            <Grid Height="60" Margin="10 0">
                 <Button x:Name="ButtonPause" Content="⏸️ Pauză" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#1D32E0" Foreground="White" Click="OnStepButtonClick" />
             </Grid>
-            <Grid Height="60" Margin="10 0 10 0">
+            <Grid Height="60" Margin="10 0">
                 <Button x:Name="ButtonExport" Content="💾 Export" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
                 <Label Name="LabelExportTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
             </Grid>
         </DockPanel>
-        <Grid Margin="0,255,0,0">
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Vertical"  Margin="50 0 20 0">
+                <Label HorizontalAlignment="Center" Foreground="#E0D41D">📥 Descărcare + ⏳ Încărcare</Label>
+                <Label Name="LabelDownloadLoadTime" HorizontalAlignment="Center" Foreground="#E0D41D">00:00:00</Label>
+            </StackPanel>
+            <StackPanel Orientation="Vertical"  Margin="20 0">
+                <Label HorizontalAlignment="Center" Foreground="#2DF78F">🚀 Editare + ⏳ Încărcare + ⚡⏳ Blocat</Label>
+                <Label Name="LabelEditLoadFreezeTime" HorizontalAlignment="Center" Foreground="#2DF78F">00:00:00</Label>
+            </StackPanel>
+            <StackPanel Orientation="Vertical"  Margin="20 0">
+                <Label HorizontalAlignment="Center" Foreground="#2DF78F">🚀 Editare + ⚡⏳ Blocat</Label>
+                <Label Name="LabelEditFreezeTime" HorizontalAlignment="Center" Foreground="#2DF78F">00:00:00</Label>
+            </StackPanel>
+        </StackPanel>
+        <Grid>
             <DockPanel VerticalAlignment="Bottom" Margin="0 20">
                 <Label>Activitate începută la:</Label>
                 <Label Name="LabelStartActivityTime"></Label>
@@ -60,5 +74,5 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-    </Grid>
+    </StackPanel>
 </Window>

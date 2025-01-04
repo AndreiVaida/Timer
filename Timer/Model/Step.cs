@@ -6,6 +6,10 @@
         FREEZE_RELOAD,
         PAUSE,
         EXPORT,
-        TOTAL
+        TOTAL,
+
+        DOWNLOAD_LOAD,
+        EDIT_LOAD_FREEZE,
+        EDIT_FREEZE
     }
 }

@@ -97,13 +97,18 @@ namespace Timer {
             _activityService.TimeUpdates
                 .ObserveOn(_uiScheduler)
                 .Subscribe(timeEvent => {
-                    switch(timeEvent.Step) {
-                        case Step.DOWNLOAD: LabelDownloadTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.LOAD: LabelLoadingTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.EDIT: LabelEditTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.FREEZE_RELOAD: LabelFreezeReloadTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.EXPORT: LabelExportTime.Content = timeEvent.Duration.ToString(); break;
-                        case Step.TOTAL: LabelTotalTime.Content = timeEvent.Duration.ToString(); break;
+                    var time = timeEvent.Duration.ToString();
+
+                    switch (timeEvent.Step) {
+                        case Step.DOWNLOAD: LabelDownloadTime.Content = time; break;
+                        case Step.LOAD: LabelLoadingTime.Content = time; break;
+                        case Step.EDIT: LabelEditTime.Content = time; break;
+                        case Step.FREEZE_RELOAD: LabelFreezeReloadTime.Content = time; break;
+                        case Step.EXPORT: LabelExportTime.Content = time; break;
+                        case Step.TOTAL: LabelTotalTime.Content = time; break;
+                        case Step.DOWNLOAD_LOAD: LabelDownloadLoadTime.Content = time; break;
+                        case Step.EDIT_LOAD_FREEZE: LabelEditLoadFreezeTime.Content = time; break;
+                        case Step.EDIT_FREEZE: LabelEditFreezeTime.Content = time; break;
                     }
                 });
         }

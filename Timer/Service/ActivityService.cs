@@ -64,7 +64,17 @@ namespace Timer.service {
                 var stepDuration = nextTimeLog.DateTime.Subtract(timeLog.DateTime);
                 AddDuration(timeLog.Step, stepDuration);
                 AddDuration(Step.TOTAL, stepDuration);
+                AddCumulatedDuration(timeLog.Step, stepDuration);
             }
+        }
+
+        private void AddCumulatedDuration(Step step, TimeSpan stepDuration) {
+            if (step is Step.DOWNLOAD or Step.LOAD)
+                AddDuration(Step.DOWNLOAD_LOAD, stepDuration);
+            if (step is Step.EDIT or Step.LOAD or Step.FREEZE_RELOAD)
+                AddDuration(Step.EDIT_LOAD_FREEZE, stepDuration);
+            if (step is Step.EDIT or Step.FREEZE_RELOAD)
+                AddDuration(Step.EDIT_FREEZE, stepDuration);
         }
 
         private void InitializeStepsDuration() {
@@ -74,7 +84,10 @@ namespace Timer.service {
                 [Step.EDIT] = new TimeSpan(),
                 [Step.FREEZE_RELOAD] = new TimeSpan(),
                 [Step.EXPORT] = new TimeSpan(),
-                [Step.TOTAL] = new TimeSpan()
+                [Step.TOTAL] = new TimeSpan(),
+                [Step.DOWNLOAD_LOAD] = new TimeSpan(),
+                [Step.EDIT_LOAD_FREEZE] = new TimeSpan(),
+                [Step.EDIT_FREEZE] = new TimeSpan(),
             };
         }
 
@@ -102,8 +115,10 @@ namespace Timer.service {
 
             var stepDuration = CalculateCurrentStepDuration(currentTimeLog);
             var totalDuration = CalculateTotalDuration(currentTimeLog.Step, stepDuration);
+
             NotifyStepDuration(currentTimeLog.Step, stepDuration);
             NotifyStepDuration(Step.TOTAL, totalDuration);
+            CalculateAndNotifyCumulatedSteps(currentTimeLog);
         }
 
         private TimeSpan CalculateCurrentStepDuration(TimeLog timeLog) {
@@ -118,6 +133,28 @@ namespace Timer.service {
                 .Aggregate(new TimeSpan(), (totalDuration, duration) => totalDuration.Add(duration));
 
             return duration.Add(recalculatedDuration);
+        }
+
+        private void CalculateAndNotifyCumulatedSteps(TimeLog currentTimeLog) {
+            if (currentTimeLog.Step is Step.DOWNLOAD or Step.LOAD) {
+                var cumulatedStepsDuration = CalculateStepsDuration(currentTimeLog, new() { Step.DOWNLOAD, Step.LOAD });
+                NotifyStepDuration(Step.DOWNLOAD_LOAD, cumulatedStepsDuration);
+            }
+            if (currentTimeLog.Step is Step.EDIT or Step.LOAD or Step.FREEZE_RELOAD) {
+                var cumulatedStepsDuration = CalculateStepsDuration(currentTimeLog, new() { Step.EDIT, Step.LOAD, Step.FREEZE_RELOAD });
+                NotifyStepDuration(Step.EDIT_LOAD_FREEZE, cumulatedStepsDuration);
+            }
+            if (currentTimeLog.Step is Step.EDIT or Step.FREEZE_RELOAD) {
+                var cumulatedStepsDuration = CalculateStepsDuration(currentTimeLog, new() { Step.EDIT, Step.FREEZE_RELOAD });
+                NotifyStepDuration(Step.EDIT_FREEZE, cumulatedStepsDuration);
+            }
+        }
+
+        private TimeSpan CalculateStepsDuration(TimeLog currentTimeLog, List<Step> stepsToCumulate) {
+            var loggedDuration = stepsToCumulate.Aggregate(TimeSpan.Zero, (sum, step) => sum.Add(_stepsDuration[step]));
+
+            var durationSinceStepStarted = TimeUtils.CurrentDateTime().Subtract(currentTimeLog.DateTime);
+            return loggedDuration.Add(durationSinceStepStarted);
         }
 
         private void UpdateLastStepDuration() {
