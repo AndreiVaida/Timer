@@ -1,11 +1,9 @@
-﻿using System.Windows;
-
-namespace Timer {
+﻿namespace Timer.ui {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
-
+    public partial class MainWindow
+    {
         public MainWindow() {
             InitializeComponent();
         }

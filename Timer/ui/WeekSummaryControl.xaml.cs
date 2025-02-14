@@ -1,7 +1,6 @@
 ﻿using Ninject;
 using System;
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +17,7 @@ namespace Timer.ui;
 /// <summary>
 /// Interaction logic for WeekSummaryControl.xaml
 /// </summary>
-public partial class WeekSummaryControl : UserControl {
+public partial class WeekSummaryControl {
     private readonly ActivityService _timeService = NinjectKernel.Kernel.Get<ActivityService>();
     private readonly Dictionary<DayOfWeek, Tuple<TextBlock, ListBox>> _weekDaysControls;
     private readonly MediaPlayer _copySoundPlayer = CreateMediaPlayer("Pop_sound.mp3");

@@ -1,6 +1,4 @@
 ﻿using Ninject;
-using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Timer.General;
@@ -11,7 +9,7 @@ namespace Timer.ui {
     /// <summary>
     /// Interaction logic for ActivitySelectorControl.xaml
     /// </summary>
-    public partial class ActivitySelectorControl : UserControl {
+    public partial class ActivitySelectorControl {
         private readonly ActivityService _timeService = NinjectKernel.Kernel.Get<ActivityService>();
         private string? _activeActivityName;
 
@@ -54,8 +52,8 @@ namespace Timer.ui {
         }
 
         private void LoadPinnedActivities() {
-            PinnedActivitiesListBox.Items.Add(UIUtils.CreateActivityButtonWithTitle("TINT-185", "Meetings", OnSelectActivityClick));
-            PinnedActivitiesListBox.Items.Add(UIUtils.CreateActivityButtonWithTitle("TINT-186", "Education", OnSelectActivityClick));
+            PinnedActivitiesListBox.Items.Add(UIUtils.CreateActivityButtonWithTitle("TINT-195", "Meetings", OnSelectActivityClick));
+            PinnedActivitiesListBox.Items.Add(UIUtils.CreateActivityButtonWithTitle("TINT-196", "Education", OnSelectActivityClick));
         }
 
         private void StartActivity(string activityName) {
