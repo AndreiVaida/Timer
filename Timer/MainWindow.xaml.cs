@@ -98,17 +98,54 @@ namespace Timer {
                 .ObserveOn(_uiScheduler)
                 .Subscribe(timeEvent => {
                     var time = timeEvent.Duration.ToString();
+                    var timeInHours = TimeUtils.GetTimeInHours(timeEvent.Duration);
 
                     switch (timeEvent.Step) {
-                        case Step.DOWNLOAD: LabelDownloadTime.Content = time; break;
-                        case Step.LOAD: LabelLoadingTime.Content = time; break;
-                        case Step.EDIT: LabelEditTime.Content = time; break;
-                        case Step.FREEZE_RELOAD: LabelFreezeReloadTime.Content = time; break;
-                        case Step.EXPORT: LabelExportTime.Content = time; break;
-                        case Step.TOTAL: LabelTotalTime.Content = time; break;
-                        case Step.DOWNLOAD_LOAD: LabelDownloadLoadTime.Content = time; break;
-                        case Step.EDIT_LOAD_FREEZE: LabelEditLoadFreezeTime.Content = time; break;
-                        case Step.EDIT_FREEZE: LabelEditFreezeTime.Content = time; break;
+                        case Step.DOWNLOAD: {
+                                LabelDownloadTime.Content = time;
+                                LabelDownloadTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.LOAD: {
+                                LabelLoadingTime.Content = time;
+                                LabelLoadingTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.EDIT: {
+                                LabelEditTime.Content = time;
+                                LabelEditTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.FREEZE_RELOAD: {
+                                LabelFreezeReloadTime.Content = time;
+                                LabelFreezeReloadTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.EXPORT: {
+                                LabelExportTime.Content = time;
+                                LabelExportTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.TOTAL: {
+                                LabelTotalTime.Content = time;
+                                LabelTotalTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.DOWNLOAD_LOAD: {
+                                LabelDownloadLoadTime.Content = time;
+                                LabelDownloadLoadTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.EDIT_LOAD_FREEZE: {
+                                LabelEditLoadFreezeTime.Content = time;
+                                LabelEditLoadFreezeTimeHours.Content = timeInHours;
+                                break;
+                            }
+                        case Step.EDIT_FREEZE: {
+                                LabelEditFreezeTime.Content = time;
+                                LabelEditFreezeTimeHours.Content = timeInHours;
+                                break;
+                            }
                     }
                 });
         }

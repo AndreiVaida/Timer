@@ -17,43 +17,51 @@
             <Label Content=".csv" Width="50" Margin="726,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
             <Button Margin="812,8,10,5" Click="OnCreateActivityClick">Creează</Button>
         </Grid>
-        <DockPanel Height="80">
-            <Grid Height="60" Margin="10 0">
+        <DockPanel Height="70">
+            <Grid Margin="10 0">
                 <Button x:Name="ButtonDownload" Content="📥 Descărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
-                <Label Name="LabelDownloadTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                <Label Name="LabelDownloadTime" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#E0D41D" Margin="0,25,0,0">00:00:00</Label>
+                <Label Name="LabelDownloadTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#E0D41D" Margin="0,40,0,0">0 ore</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0">
+            <Grid Margin="10 0">
                 <Button x:Name="ButtonLoad" Content="⏳ Încărcare program" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
-                <Label Name="LabelLoadingTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                <Label Name="LabelLoadingTime" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#E0D41D" Margin="0,25,0,0">00:00:00</Label>
+                <Label Name="LabelLoadingTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#E0D41D" Margin="0,40,0,0">0 ore</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0">
+            <Grid Margin="10 0">
                 <Button x:Name="ButtonEdit" Content="🚀 Editare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#2DF78F" Click="OnStepButtonClick" />
-                <Label Name="LabelEditTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#2DF78F">00:00:00</Label>
+                <Label Name="LabelEditTime" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#2DF78F" Margin="0,25,0,0">00:00:00</Label>
+                <Label Name="LabelEditTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#2DF78F" Margin="0,40,0,0">0 ore</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0">
+            <Grid Margin="10 0">
                 <Button x:Name="ButtonFreezeReload" Content="⚡⏳ Blocat, reîncărcare" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#FF0D76" Foreground="White" Click="OnStepButtonClick" />
-                <Label Name="LabelFreezeReloadTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#FF0D76">00:00:00</Label>
+                <Label Name="LabelFreezeReloadTime" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#FF0D76" Margin="0,25,0,0">00:00:00</Label>
+                <Label Name="LabelFreezeReloadTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#FF0D76" Margin="0,40,0,0">0 ore</Label>
             </Grid>
-            <Grid Height="60" Margin="10 0">
+            <Grid Margin="10 0">
                 <Button x:Name="ButtonPause" Content="⏸️ Pauză" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#1D32E0" Foreground="White" Click="OnStepButtonClick" />
             </Grid>
-            <Grid Height="60" Margin="10 0">
+            <Grid Margin="10 0">
                 <Button x:Name="ButtonExport" Content="💾 Export" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#E0D41D" Click="OnStepButtonClick" />
-                <Label Name="LabelExportTime" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#E0D41D">00:00:00</Label>
+                <Label Name="LabelExportTime" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#E0D41D" Margin="0,25,0,0">00:00:00</Label>
+                <Label Name="LabelExportTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#E0D41D" Margin="0,40,0,0">0 ore</Label>
             </Grid>
         </DockPanel>
-        <StackPanel Orientation="Horizontal">
-            <StackPanel Orientation="Vertical"  Margin="50 0 20 0">
+        <StackPanel Orientation="Horizontal" Height="65">
+            <StackPanel Orientation="Vertical" Margin="50 0 20 0">
                 <Label HorizontalAlignment="Center" Foreground="#E0D41D">📥 Descărcare + ⏳ Încărcare</Label>
-                <Label Name="LabelDownloadLoadTime" HorizontalAlignment="Center" Foreground="#E0D41D">00:00:00</Label>
+                <Label Name="LabelDownloadLoadTime" HorizontalAlignment="Center" Foreground="#E0D41D" Margin="0,-10,0,0">00:00:00</Label>
+                <Label Name="LabelDownloadLoadTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#E0D41D" Margin="0,-12,0,0">0 ore</Label>
             </StackPanel>
             <StackPanel Orientation="Vertical"  Margin="20 0">
                 <Label HorizontalAlignment="Center" Foreground="#2DF78F">🚀 Editare + ⏳ Încărcare + ⚡⏳ Blocat</Label>
-                <Label Name="LabelEditLoadFreezeTime" HorizontalAlignment="Center" Foreground="#2DF78F">00:00:00</Label>
+                <Label Name="LabelEditLoadFreezeTime" HorizontalAlignment="Center" Foreground="#2DF78F" Margin="0,-10,0,0">00:00:00</Label>
+                <Label Name="LabelEditLoadFreezeTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#2DF78F" Margin="0,-12,0,0">0 ore</Label>
             </StackPanel>
             <StackPanel Orientation="Vertical"  Margin="20 0">
                 <Label HorizontalAlignment="Center" Foreground="#2DF78F">🚀 Editare + ⚡⏳ Blocat</Label>
-                <Label Name="LabelEditFreezeTime" HorizontalAlignment="Center" Foreground="#2DF78F">00:00:00</Label>
+                <Label Name="LabelEditFreezeTime" HorizontalAlignment="Center" Foreground="#2DF78F" Margin="0,-10,0,0">00:00:00</Label>
+                <Label Name="LabelEditFreezeTimeHours" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#2DF78F" Margin="0,-12,0,0">0 ore</Label>
             </StackPanel>
         </StackPanel>
         <Grid>
@@ -67,7 +75,8 @@
             </DockPanel>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                 <Label HorizontalContentAlignment="Center">Total</Label>
-                <Label HorizontalContentAlignment="Center" Name="LabelTotalTime">00:00:00</Label>
+                <Label HorizontalContentAlignment="Center" Name="LabelTotalTime" Margin="0,-10,0,0">00:00:00</Label>
+                <Label HorizontalContentAlignment="Center" Name="LabelTotalTimeHours" Margin="0,-15,0,0">0 ore</Label>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Click="OnOpenFile" Margin="2">📄</Button>
                     <Button Click="OnOpenFileLocation" Margin="2">📂</Button>
