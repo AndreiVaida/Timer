@@ -13,7 +13,10 @@ namespace Timer.Utils {
             var hours = duration.ToHours().ToString("0.#");
             return hours + " " + GetHoursWord(hours); ;
         }
-        private static decimal ToHours(this TimeSpan duration) => duration.Hours + (duration.Minutes + (duration.Seconds >= 30 ? 1 : 0)) / 60m;
+        private static decimal ToHours(this TimeSpan duration) =>
+            duration.Days * 24 +
+            duration.Hours +
+            (duration.Minutes + (duration.Seconds >= 30 ? 1 : 0)) / 60m;
         private static string GetHoursWord(string hours) => hours == "1" ? "oră" : "ore";
     }
 }
